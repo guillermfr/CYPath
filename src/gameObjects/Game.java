@@ -1,5 +1,7 @@
 package gameObjects;
 
+import exception.UnknownColorException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +45,28 @@ public class Game {
         this.turnCount++;
     }
 
-    public Player checkVictory() {
-        // Vérifier si un joueur est sur son côté opposé
+    public Player checkVictory() throws UnknownColorException {
+        for (Player p : players) {
+            switch (p.getColor()) {
+                case BLUE -> {
+                    if (p.getPosition().getY() == 0) return p;
+                }
+
+                case YELLOW -> {
+                    if (p.getPosition().getY() == this.board.getSize()) return p;
+                }
+
+                case RED -> {
+                    if (p.getPosition().getX() == 0) return p;
+                }
+
+                case GREEN -> {
+                    if (p.getPosition().getX() == this.board.getSize()) return p;
+                }
+
+                default -> throw new UnknownColorException("This color does not exist.");
+            }
+        }
 
         return null;
     }
