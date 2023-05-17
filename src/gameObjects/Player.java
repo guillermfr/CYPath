@@ -58,7 +58,6 @@ public class Player {
         Position playerPos = this.position;
         int playerX = playerPos.getX();
         int playerY = playerPos.getY();
-        Position newPos = new Position(x, y);
 
         if (isCellOccupied(x, y, playerList)) return false;
 
