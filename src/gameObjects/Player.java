@@ -123,14 +123,14 @@ public class Player {
         return false;
     }
 
-    private boolean checkDirection(Direction direction, int distance, int currentPlayerX, int currentPlayerY, List<Player> playerList) throws UnknownDirectionException {
+    private boolean checkDirection(Direction direction, int distance, int x, int y, List<Player> playerList) throws UnknownDirectionException {
         switch (direction) {
             case NORTH -> {
                 int checks = 0;
 
                 for (Player p : playerList) {
                     for (int i = 1; i <= distance ; i++) {
-                        if (p.getPosition().getX() == currentPlayerX && p.getPosition().getY() + i == currentPlayerY) checks++;
+                        if (p.getPosition().getX() == x && p.getPosition().getY() + i == y) checks++;
                     }
                 }
 
@@ -142,7 +142,7 @@ public class Player {
 
                 for (Player p : playerList) {
                     for (int i = 1; i <= distance ; i++) {
-                        if (p.getPosition().getX() + i == currentPlayerX && p.getPosition().getY() == currentPlayerY) checks++;
+                        if (p.getPosition().getX() + i == x && p.getPosition().getY() == y) checks++;
                     }
                 }
 
@@ -154,7 +154,7 @@ public class Player {
 
                 for (Player p : playerList) {
                     for (int i = 1; i <= distance ; i++) {
-                        if (p.getPosition().getX() == currentPlayerX && p.getPosition().getY() - i == currentPlayerY) checks++;
+                        if (p.getPosition().getX() == x && p.getPosition().getY() - i == y) checks++;
                     }
                 }
 
@@ -166,7 +166,7 @@ public class Player {
 
                 for (Player p : playerList) {
                     for (int i = 1; i <= distance ; i++) {
-                        if (p.getPosition().getX() - i == currentPlayerX && p.getPosition().getY() == currentPlayerY) checks++;
+                        if (p.getPosition().getX() - i == x && p.getPosition().getY() == y) checks++;
                     }
                 }
 
