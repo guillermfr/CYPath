@@ -29,7 +29,7 @@ public class EdgeWeightedGraph {
     }
 
     public void addEdge(Edge edge) {
-        adjacencyList[edge.getSource().getNumber(this.size)].add(edge);
+        adjacencyList[edge.getSource().toAdjacencyListIndex(this.size)].add(edge);
     }
 
     public void initializeGraph(){
@@ -66,7 +66,7 @@ public class EdgeWeightedGraph {
                 if(i == 0) {
                     System.out.print(" ");
                 }
-                System.out.print((new Position(i,j)).getNumber(this.size));
+                System.out.print((new Position(i,j)).toAdjacencyListIndex(this.size));
                 if(j != this.size - 1) {
                     System.out.print("-");
                 }
