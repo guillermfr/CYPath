@@ -41,8 +41,8 @@ public class Position {
         this.y = newPos.y;
     }
 
-    public int getNumber() {
-        return this.x * this.y;
+    public int getNumber(int size) {
+        return (this.x)*size + this.y;
     }
 
     @Override
@@ -52,5 +52,10 @@ public class Position {
         }
 
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + "," + y + ")";
     }
 }
