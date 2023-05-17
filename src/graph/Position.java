@@ -4,12 +4,10 @@ public class Position {
 
     private int x;
     private int y;
-    private boolean occupied;
 
     public Position(int x, int y) {
         this.x = x;
         this.y = y;
-        this.occupied = false;
     }
 
     public int getX() {
@@ -20,10 +18,6 @@ public class Position {
         return y;
     }
 
-    public boolean isOccupied() {
-        return occupied;
-    }
-
     public void setX(int x) {
         this.x = x;
     }
@@ -32,17 +26,13 @@ public class Position {
         this.y = y;
     }
 
-    public void setOccupied(boolean occupied) {
-        this.occupied = occupied;
+    public void move(int x, int y) {
+        this.setX(x);
+        this.setY(y);
     }
 
-    public void move(Position newPos) {
-        this.x = newPos.x;
-        this.y = newPos.y;
-    }
-
-    public int getNumber(int size) {
-        return (this.x)*size + this.y;
+    public int toAdjacencyListIndex(int boardSize) {
+        return this.y * boardSize + this.x;
     }
 
     @Override
