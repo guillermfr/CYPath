@@ -1,6 +1,12 @@
 package graph;
 
+import enumeration.Direction;
 import exception.BadPositionException;
+import gameObjects.Board;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Position is used for two purposes: to know where a player is on the board, and to create edges for the graph that represents the board.
@@ -93,6 +99,54 @@ public class Position {
      */
     public int toAdjacencyListIndex(int boardSize) {
         return this.y * boardSize + this.x;
+    }
+
+    /**
+     * This method generates a map of Edges connected to a Position.
+     * It is useful to know the neighbours of a Position.
+     * @param graph graph representing the board.
+     * @return a Map with every direction and the edge associated with the direction, if the direction exists.
+     */
+    public Map<Direction, Edge> getNeighbourEdges(EdgeWeightedGraph graph) {
+        if(graph.getSize() < 2) return null;
+
+        Map<Direction, Edge> neighbours = new HashMap<Direction, Edge>();
+        int index = this.toAdjacencyListIndex(graph.getSize());
+
+        // For every edge connected to the Position, we verify in which direction it is, and add it to the Map.
+        for (Edge e : graph.getAdjacencyList()[index]) {
+            if(this.getX()-1 == e.getTarget().getX()) {
+                neighbours.put(Direction.NORTH, e);
+            } else if(this.getX()+1 == e.getTarget().getX()) {
+                neighbours.put(Direction.SOUTH, e);
+            } else if(this.getY()-1 == e.getTarget().getY()) {
+                neighbours.put(Direction.WEST, e);
+            } else {
+                neighbours.put(Direction.EAST, e);
+            }
+        }
+
+        return neighbours;
+    }
+
+    /**
+     * This method generates a map of Positions connected to a Position.
+     * It is useful to know the neighbours of a Position.
+     * We simply reuse getNeighbourEdges and get the target position of every Edge.
+     * @param graph graph representing the board.
+     * @return a Map with every direction and the edge associated with the direction, if the direction exists.
+     */
+    public Map<Direction, Position> getNeighbourPositions(EdgeWeightedGraph graph) {
+        if(graph.getSize() < 2) return null;
+
+        Map<Direction, Edge> edgeNeighbours = this.getNeighbourEdges(graph);
+        Map<Direction, Position> positionNeighbours = new HashMap<Direction, Position>();
+
+        for(Map.Entry<Direction, Edge> entry : edgeNeighbours.entrySet()) {
+            positionNeighbours.put(entry.getKey(), entry.getValue().getTarget());
+        }
+
+        return positionNeighbours;
     }
 
     @Override
