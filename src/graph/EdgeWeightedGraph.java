@@ -1,10 +1,13 @@
 package graph;
 
+import enumeration.Direction;
 import exception.BadPositionException;
 import exception.BadSizeException;
 import exception.BadWeightException;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * EdgeWeightedGraph represents the board of the game.
@@ -74,20 +77,20 @@ public class EdgeWeightedGraph {
      * It creates a graph where every node is connected to nodes on its right, left, top and bottom.
      */
     public void initializeGraph(){
-        for (int i = 0; i < this.size; i++) {
-            for (int j = 0; j < this.size; j++) {
+        for (int y = 0; y < this.size; y++) {
+            for (int x = 0; x < this.size; x++) {
                 try {
-                    if(i > 0) {
-                        addEdge(new Edge(new Position(i,j),new Position(i-1,j),0));
+                    if(y > 0) {
+                        addEdge(new Edge(new Position(x,y),new Position(x,y-1),0));
                     }
-                    if(i < this.size - 1) {
-                        addEdge(new Edge(new Position(i,j),new Position(i+1,j),0));
+                    if(y < this.size - 1) {
+                        addEdge(new Edge(new Position(x,y),new Position(x,y+1),0));
                     }
-                    if(j > 0) {
-                        addEdge(new Edge(new Position(i,j),new Position(i,j-1),0));
+                    if(x > 0) {
+                        addEdge(new Edge(new Position(x,y),new Position(x-1,y),0));
                     }
-                    if(j < this.size - 1) {
-                        addEdge(new Edge(new Position(i,j),new Position(i,j+1),0));
+                    if(x < this.size - 1) {
+                        addEdge(new Edge(new Position(x,y),new Position(x+1,y),0));
                     }
                 }
                 catch (BadPositionException | BadWeightException exception) {
@@ -95,6 +98,26 @@ public class EdgeWeightedGraph {
                 }
             }
         }
+    }
+
+    private void DFSUtil(Position pos, boolean[] visited) {
+        if(!visited[pos.toAdjacencyListIndex(this.size)]) {
+            visited[pos.toAdjacencyListIndex(this.size)] = true;
+            System.out.println(pos.toAdjacencyListIndex(this.size));
+
+            Map<Direction, Position> neighbours = pos.getNeighbourPositions(this);
+
+            for(Map.Entry<Direction, Position> entry : neighbours.entrySet()) {
+                System.out.println(entry.getKey());
+                this.DFSUtil(entry.getValue(), visited);
+            }
+        }
+    }
+
+    public void DFS(Position pos) {
+        boolean[] visited = new boolean[this.size*this.size];
+
+        this.DFSUtil(pos, visited);
     }
 
     @Override
@@ -133,6 +156,19 @@ public class EdgeWeightedGraph {
                 }
             }
             System.out.println();
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            EdgeWeightedGraph test = new EdgeWeightedGraph(4);
+            test.initializeGraph();
+            System.out.println(test);
+
+            test.DFS(new Position(0,0));
+        }
+        catch (BadSizeException | BadPositionException exception) {
+            System.out.println(exception);
         }
     }
 
