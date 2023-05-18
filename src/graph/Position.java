@@ -115,11 +115,11 @@ public class Position {
 
         // For every edge connected to the Position, we verify in which direction it is, and add it to the Map.
         for (Edge e : graph.getAdjacencyList()[index]) {
-            if(this.getX()-1 == e.getTarget().getX()) {
+            if(this.getY()-1 == e.getTarget().getY()) {
                 neighbours.put(Direction.NORTH, e);
-            } else if(this.getX()+1 == e.getTarget().getX()) {
+            } else if(this.getY()+1 == e.getTarget().getY()) {
                 neighbours.put(Direction.SOUTH, e);
-            } else if(this.getY()-1 == e.getTarget().getY()) {
+            } else if(this.getX()-1 == e.getTarget().getX()) {
                 neighbours.put(Direction.WEST, e);
             } else {
                 neighbours.put(Direction.EAST, e);
