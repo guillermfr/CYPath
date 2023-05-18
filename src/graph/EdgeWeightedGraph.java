@@ -1,13 +1,14 @@
 package graph;
 
+import enumeration.Color;
 import enumeration.Direction;
 import exception.BadPositionException;
 import exception.BadSizeException;
 import exception.BadWeightException;
+import exception.UnknownColorException;
+import gameObjects.Player;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 /**
  * EdgeWeightedGraph represents the board of the game.
@@ -100,24 +101,80 @@ public class EdgeWeightedGraph {
         }
     }
 
-    private void DFSUtil(Position pos, boolean[] visited) {
+    /**
+     * Main method for the DFS.
+     * It is a recursive method that explores every Position to see if a player can reach the side he needs to go to.
+     * @param pos Current position.
+     * @param visited Array of boolean that marks visited Positions.
+     * @param color Color of the current player.
+     * @param reached Boolean which is true if the side is reachable.
+     */
+    private void DFSUtil(Position pos, boolean[] visited, Color color, boolean[] reached) {
         if(!visited[pos.toAdjacencyListIndex(this.size)]) {
+            switch (color) {
+                case BLUE -> {
+                    if (pos.getY() == 0) reached[0] = true;
+                }
+
+                case YELLOW -> {
+                    if (pos.getY() == this.size) reached[0] = true;
+                }
+
+                case RED -> {
+                    if (pos.getX() == 0) reached[0] = true;
+                }
+
+                case GREEN -> {
+                    if (pos.getX() == this.size) reached[0] = true;
+                }
+
+                default -> {
+                    System.out.println("test");;
+                }
+            }
             visited[pos.toAdjacencyListIndex(this.size)] = true;
-            System.out.println(pos.toAdjacencyListIndex(this.size));
 
-            Map<Direction, Position> neighbours = pos.getNeighbourPositions(this);
+            Map<Direction, Edge> edgeNeighbours = pos.getNeighbourEdges(this);
 
-            for(Map.Entry<Direction, Position> entry : neighbours.entrySet()) {
-                System.out.println(entry.getKey());
-                this.DFSUtil(entry.getValue(), visited);
+            for(Map.Entry<Direction, Edge> entry : edgeNeighbours.entrySet()) {
+                if(entry.getValue().getWeight() == 0) {
+                    this.DFSUtil(entry.getValue().getTarget(), visited, color, reached);
+                }
             }
         }
+
     }
 
-    public void DFS(Position pos) {
+    /**
+     * Intermediate method for the DFS.
+     * It creates an array to mark visited Positions.
+     * @param pos Position of the current player.
+     * @param color Color of the current player.
+     * @return true if the player has a path, false if not.
+     */
+    public boolean DFS(Position pos, Color color) {
         boolean[] visited = new boolean[this.size*this.size];
+        boolean[] reached = new boolean[1];
 
-        this.DFSUtil(pos, visited);
+        this.DFSUtil(pos, visited, color, reached);
+
+        return reached[0];
+    }
+
+    /**
+     * This method checks if every player has a path to the side he needs to go to.
+     * To do that, we do a Depth First Search starting from the Position of every player.
+     * @param players the list of players.
+     * @return a map with every player and a boolean which is true if the corresponding player has a path.
+     */
+    public Map<Player, Boolean> checkPath(List<Player> players) {
+        Map<Player, Boolean> checkPathPlayers = new HashMap<Player, Boolean>();
+
+        for (Player p : players) {
+            checkPathPlayers.put(p, this.DFS(p.getPosition(), p.getColor()));
+        }
+
+        return checkPathPlayers;
     }
 
     @Override
@@ -165,7 +222,7 @@ public class EdgeWeightedGraph {
             test.initializeGraph();
             System.out.println(test);
 
-            test.DFS(new Position(0,0));
+            System.out.println(test.DFS(new Position(1,1), Color.BLUE));
         }
         catch (BadSizeException | BadPositionException exception) {
             System.out.println(exception);
