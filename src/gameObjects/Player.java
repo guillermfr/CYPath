@@ -3,6 +3,7 @@ package gameObjects;
 import enumeration.Color;
 import enumeration.Direction;
 import exception.BadDistanceException;
+import exception.BadWeightException;
 import exception.UnknownDirectionException;
 import exception.BadPositionException;
 import graph.Position;
@@ -12,47 +13,110 @@ import java.util.List;
 import java.util.Map;
 
 public class Player {
+    /**
+     * Name of the player
+     * Its name will be displayed throughout the game
+     */
     private String name;
+
+    /**
+     * Position of the player
+     * Its location on the game board
+     */
     private Position position;
+
+    /**
+     * Color of the player
+     * The color representing the player
+     */
     private Color color;
 
+    /**
+     * Constructor for the class Player
+     * @param name name of the player
+     * @param color color of the player
+     */
     public Player(String name, Color color) {
         this.name = name;
         this.color = color;
     }
 
+    /**
+     * Gets the name of the player
+     * @return player's current name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Gets the color of the player
+     * @return player's current color
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * Gets the position of the player
+     * @return player's current position
+     */
     public Position getPosition() {
         return position;
     }
 
+    /**
+     * Sets the new color of the player
+     * @param color new color
+     */
     public void setColor(Color color) {
         this.color = color;
     }
 
+    /**
+     * Sets the new name of the player
+     * @param name new name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Sets the new position of the player
+     * @param position new position
+     */
     public void setPosition(Position position) {
         this.position = position;
     }
 
+    /**
+     * Moves the player to location (x ; y) if it is valid
+     * @param x             x coordinate of the to-be location
+     * @param y             y coordinate of the to-be location
+     * @param board         game board
+     * @param playerList    list of all players on the board
+     * @throws UnknownDirectionException if at some point, a direction is not valid
+     * @throws BadPositionException if x or y is lesser than 0
+     */
     public void move(int x, int y, Board board, List<Player> playerList) throws Exception {
         if (this.isMoveValid(x, y, board, playerList)) {
             this.position.move(x, y);
         }
     }
 
-    public void placeBarrier(Edge e, Edge f, Board board) {
-
+    /**
+     * Places a barrier on edges e and f if it is valid
+     * @param e             first edge on which the barrier is placed
+     * @param f             second edge on which the barrier is placed
+     * @param board         game board
+     * @param playerList    list of all players on the board
+     * @throws BadWeightException if the weight is negative
+     */
+    public void placeBarrier(Edge e, Edge f, Board board, List<Player> playerList) throws BadWeightException {
+        if (this.isBarrierValid(e, f, board, playerList)) {
+            e.setWeight(1);
+            f.setWeight(1);
+        }
     }
 
     /**
@@ -76,22 +140,22 @@ public class Player {
         // If the player wants to move diagonal: there has to be a player to jump over, and another behind, with no barriers stopping him
         // If player wants to go north-west
         if (x + 1 == playerX && y + 1 == playerY) {
-            return isDiagonalValid(Direction.NORTH, Direction.WEST, playerList, board);
+            return isDiagonalMoveValid(Direction.NORTH, Direction.WEST, playerList, board);
         }
 
         // If player wants to go north-east
         if (x - 1 == playerX && y + 1 == playerY) {
-            return isDiagonalValid(Direction.NORTH, Direction.EAST, playerList, board);
+            return isDiagonalMoveValid(Direction.NORTH, Direction.EAST, playerList, board);
         }
 
         // If player wants to go south-east
         if (x - 1 == playerX && y - 1 == playerY) {
-            return isDiagonalValid(Direction.SOUTH, Direction.EAST, playerList, board);
+            return isDiagonalMoveValid(Direction.SOUTH, Direction.EAST, playerList, board);
         }
 
         // If player wants to go south-west
         if (x + 1 == playerX && y - 1 == playerY) {
-            return isDiagonalValid(Direction.SOUTH, Direction.WEST, playerList, board);
+            return isDiagonalMoveValid(Direction.SOUTH, Direction.WEST, playerList, board);
         }
 
         // If the player wants to move 2 cells in any direction: there has to be a player to jump over and no barriers to stop the player
@@ -203,18 +267,30 @@ public class Player {
     }
 
     /**
-     * For location (x ; y), checks if there is no barrier in one direction
-     * @param direction direction from the player to check
+     * For location (x ; y), checks if there is a barrier in one direction
+     * @param direction direction from the location to check
      * @param x         x coordinate of the location
      * @param y         y coordinate of the location
      * @param board     game board
-     * @return the lack of barrier in the given direction
+     * @return the presence of a barrier in the given direction
      * @throws UnknownDirectionException if direction is not a valid direction
      * @throws BadPositionException if x or y is lesser than 0
      */
-    private boolean checkNoBarriers(Direction direction, int x, int y, Board board) throws Exception {
+    private boolean checkBarrier(Direction direction, int x, int y, Board board) throws Exception {
         Map<Direction, Edge> neighbours = (new Position(x, y)).getNeighbourEdges(board);
-        return !neighbours.containsKey(direction) || neighbours.get(direction).getWeight() == 0;
+        return !neighbours.containsKey(direction) || neighbours.get(direction).getWeight() == 1;
+    }
+
+    /**
+     * For location at Position p, checks if there is a barrier in one direction
+     * @param direction direction from the location to check
+     * @param p         position from where to check
+     * @param board     game board
+     * @return the presence of a barrier in the given direction
+     */
+    private boolean checkBarrier(Direction direction, Position p, Board board) {
+        Map<Direction, Edge> neighbours = p.getNeighbourEdges(board);
+        return !neighbours.containsKey(direction) || neighbours.get(direction).getWeight() == 1;
     }
 
     /**
@@ -227,7 +303,7 @@ public class Player {
      * @throws UnknownDirectionException if direction is not a valid direction
      * @throws BadPositionException if x or y is lesser than 0
      */
-    private boolean isDiagonalValid(Direction d1, Direction d2, List<Player> playerList, Board board) throws Exception {
+    private boolean isDiagonalMoveValid(Direction d1, Direction d2, List<Player> playerList, Board board) throws Exception {
         int x = this.position.getX();
         int y = this.position.getY();
 
@@ -239,13 +315,13 @@ public class Player {
 
         return (
             ((checkDirection(d1, 2, playerList)                                                                             // Whether there are 2 players back to back in a single direction...
-                || checkDirection(d1, 1, playerList) && !checkNoBarriers(d1, x + xOffsetD1, y + yOffsetD1, board))    //...or there is a barrier behind a single player
-                    && checkNoBarriers(d1, x, y, board)                                                                             // Checking if there's no barrier in d1 directly from the Player
-                    && checkNoBarriers(d2, x + xOffsetD1, y + yOffsetD1, board)) ||                                           // Checking barrier in d2 after player has moved in d1
+                || checkDirection(d1, 1, playerList) && checkBarrier(d1, x + xOffsetD1, y + yOffsetD1, board))    //...or there is a barrier behind a single player
+                    && !checkBarrier(d1, x, y, board)                                                                             // Checking if there's no barrier in d1 directly from the Player
+                    && !checkBarrier(d2, x + xOffsetD1, y + yOffsetD1, board)) ||                                           // Checking barrier in d2 after player has moved in d1
             ((checkDirection(d2, 2, playerList)                                                                             // Now we repeat by inverting d2 and d1
-                || checkDirection(d2, 1, playerList) && !checkNoBarriers(d2, x + xOffsetD2, y + yOffsetD2, board))
-                    && checkNoBarriers(d2, x, y, board)
-                    && checkNoBarriers(d1, x + xOffsetD2, y + yOffsetD2, board))
+                || checkDirection(d2, 1, playerList) && checkBarrier(d2, x + xOffsetD2, y + yOffsetD2, board))
+                    && !checkBarrier(d2, x, y, board)
+                    && !checkBarrier(d1, x + xOffsetD2, y + yOffsetD2, board))
         );
     }
 
@@ -265,7 +341,7 @@ public class Player {
         int xOffset = new int[]{0, 1, 0, -1}[d.ordinal()];
         int yOffset = new int[]{-1, 0, 1, 0}[d.ordinal()];
 
-        return checkDirection(d, 1, playerList) && checkNoBarriers(d, x, y, board) && checkNoBarriers(d, x + xOffset, y + yOffset, board);
+        return checkDirection(d, 1, playerList) && !checkBarrier(d, x, y, board) && !checkBarrier(d, x + xOffset, y + yOffset, board);
     }
 
     /**
@@ -286,14 +362,53 @@ public class Player {
             int xOffset = new int[]{0, 1, 0, -1}[d.ordinal()];
             int yOffset = new int[]{-1, 0, 1, 0}[d.ordinal()];
 
-            if (checkNoBarriers(d, playerX, playerY, board) && destX == playerX + xOffset && destY == playerY + yOffset) return true;
+            if (!checkBarrier(d, playerX, playerY, board) && destX == playerX + xOffset && destY == playerY + yOffset) return true;
         }
 
         return false;
     }
-    
-    private boolean isBarrierValid(Edge e, Edge f, Board board) {
 
-        return true;
+    /**
+     * Checks if placing a barrier on edges e and f is valid
+     * @param e             first edge on which the barrier is placed
+     * @param f             second edge on which the barrier is placed
+     * @param board         game board
+     * @param playerList    list of all players on the board
+     * @return if the given barrier would be valid if placed
+     * @throws BadWeightException if the weight is negative
+     */
+    private boolean isBarrierValid(Edge e, Edge f, Board board, List<Player> playerList) throws BadWeightException {
+        // We will get the Positions from smallest to biggest (in terms of adjacency list index)
+        boolean areEPositionsInRightOrder = e.getSource().toAdjacencyListIndex(board.getSize()) < e.getTarget().toAdjacencyListIndex(board.getSize());
+        Position ePos1 = areEPositionsInRightOrder ? e.getSource() : e.getTarget();
+        Position ePos2 = areEPositionsInRightOrder ? e.getTarget() : e.getSource();
+        boolean areFPositionsInRightOrder = f.getSource().toAdjacencyListIndex(board.getSize()) < f.getTarget().toAdjacencyListIndex(board.getSize());
+        Position fPos1 = areFPositionsInRightOrder ? f.getSource() : f.getTarget();
+        Position fPos2 = areFPositionsInRightOrder ? f.getTarget() : f.getSource();
+
+        // Check if the barrier is two adjacent edges
+        boolean isHorizontalBarrier = ePos1.checkDistance(fPos1, 1, 0) && ePos2.checkDistance(fPos2, 1, 0);
+        boolean isVerticalBarrier = ePos1.checkDistance(fPos1, 0, 1) && ePos2.checkDistance(fPos2, 0, 1);
+        if (!isHorizontalBarrier && !isVerticalBarrier) return false;
+
+        // Check if the barrier doesn't overlap another in the same orientation i.e. one of the edge is already a barrier
+        if (e.getWeight() == 1 || f.getWeight() == 1) return false;
+
+        // Check if the barrier doesn't cross another barrier (in a + shape)
+        if (
+            isHorizontalBarrier && checkBarrier(Direction.EAST, ePos1, board) && checkBarrier(Direction.EAST, ePos2, board) ||
+            isVerticalBarrier && checkBarrier(Direction.SOUTH, ePos1, board) && checkBarrier(Direction.SOUTH, ePos2, board)
+        ) return false;
+
+        // Check if the barrier doesn't cut any player from its goal
+        // Temporarily accept the barriers as valid to check if they would be
+        e.setWeight(1);
+        f.setWeight(1);
+        boolean isGameStillPossible = !board.checkPath(playerList).containsValue(false);
+        // Remove them
+        e.setWeight(0);
+        f.setWeight(0);
+
+        return isGameStillPossible;
     }
 }
