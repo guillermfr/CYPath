@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import static java.lang.Math.abs;
+
 /**
  * Position is used for two purposes: to know where a player is on the board, and to create edges for the graph that represents the board.
  */
@@ -147,6 +149,17 @@ public class Position {
         }
 
         return positionNeighbours;
+    }
+
+    /**
+     * Checks if another Position is at a certain x and y offset from current Position
+     * @param otherPos the other Position to check
+     * @param x        the x offset to check
+     * @param y        the y offset to check
+     * @return if the offset is correct
+     */
+    public boolean checkDistance(Position otherPos, int x, int y) {
+        return abs(this.x - otherPos.getX()) == x && abs(this.y - otherPos.getY()) == y;
     }
 
     @Override
