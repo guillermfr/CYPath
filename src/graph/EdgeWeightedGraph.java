@@ -108,8 +108,9 @@ public class EdgeWeightedGraph {
      * @param visited Array of boolean that marks visited Positions.
      * @param color Color of the current player.
      * @param reached Boolean which is true if the side is reachable.
+     * @throws UnknownColorException if the color isn't valid, throws an exception
      */
-    private void DFSUtil(Position pos, boolean[] visited, Color color, boolean[] reached) {
+    private void DFSUtil(Position pos, boolean[] visited, Color color, boolean[] reached) throws UnknownColorException {
         if(!visited[pos.toAdjacencyListIndex(this.size)]) {
             switch (color) {
                 case BLUE -> {
@@ -129,7 +130,7 @@ public class EdgeWeightedGraph {
                 }
 
                 default -> {
-                    System.out.println("test");;
+                    throw new UnknownColorException("Unknown color");
                 }
             }
             visited[pos.toAdjacencyListIndex(this.size)] = true;
@@ -142,7 +143,6 @@ public class EdgeWeightedGraph {
                 }
             }
         }
-
     }
 
     /**
@@ -156,7 +156,12 @@ public class EdgeWeightedGraph {
         boolean[] visited = new boolean[this.size*this.size];
         boolean[] reached = new boolean[1];
 
-        this.DFSUtil(pos, visited, color, reached);
+        try {
+            this.DFSUtil(pos, visited, color, reached);
+        }
+        catch (UnknownColorException uce) {
+            System.out.println(uce);
+        }
 
         return reached[0];
     }
