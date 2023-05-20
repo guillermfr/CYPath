@@ -112,10 +112,11 @@ public class Player {
      * @param playerList    list of all players on the board
      * @throws BadWeightException if the weight is negative
      */
-    public void placeBarrier(Edge e, Edge f, Board board, List<Player> playerList) throws BadWeightException {
-        if (this.isBarrierValid(e, f, board, playerList)) {
+    public void placeBarrier(Edge e, Edge f, Board board, List<Player> playerList, List<Barrier> barrierList) throws BadWeightException {
+        if (this.isBarrierValid(e, f, board, playerList, barrierList)) {
             e.setWeight(1);
             f.setWeight(1);
+            barrierList.add(new Barrier(e, f, this));
         }
     }
 
@@ -314,11 +315,11 @@ public class Player {
         int yOffsetD2 = new int[]{-1, 0, 1, 0}[d2.ordinal()];
 
         return (
-            ((checkDirection(d1, 2, playerList)                                                                             // Whether there are 2 players back to back in a single direction...
+            ((checkDirection(d1, 2, playerList)                                                                         // Whether there are 2 players back to back in a single direction...
                 || checkDirection(d1, 1, playerList) && checkBarrier(d1, x + xOffsetD1, y + yOffsetD1, board))    //...or there is a barrier behind a single player
-                    && !checkBarrier(d1, x, y, board)                                                                             // Checking if there's no barrier in d1 directly from the Player
-                    && !checkBarrier(d2, x + xOffsetD1, y + yOffsetD1, board)) ||                                           // Checking barrier in d2 after player has moved in d1
-            ((checkDirection(d2, 2, playerList)                                                                             // Now we repeat by inverting d2 and d1
+                    && !checkBarrier(d1, x, y, board)                                                                           // Checking if there's no barrier in d1 directly from the Player
+                    && !checkBarrier(d2, x + xOffsetD1, y + yOffsetD1, board)) ||                                         // Checking barrier in d2 after player has moved in d1
+            ((checkDirection(d2, 2, playerList)                                                                         // Now we repeat by inverting d2 and d1
                 || checkDirection(d2, 1, playerList) && checkBarrier(d2, x + xOffsetD2, y + yOffsetD2, board))
                     && !checkBarrier(d2, x, y, board)
                     && !checkBarrier(d1, x + xOffsetD2, y + yOffsetD2, board))
@@ -377,27 +378,47 @@ public class Player {
      * @return if the given barrier would be valid if placed
      * @throws BadWeightException if the weight is negative
      */
-    private boolean isBarrierValid(Edge e, Edge f, Board board, List<Player> playerList) throws BadWeightException {
+    private boolean isBarrierValid(Edge e, Edge f, Board board, List<Player> playerList, List<Barrier> barrierList) throws BadWeightException {
         // We will get the Positions from smallest to biggest (in terms of adjacency list index)
-        boolean areEPositionsInRightOrder = e.getSource().toAdjacencyListIndex(board.getSize()) < e.getTarget().toAdjacencyListIndex(board.getSize());
-        Position ePos1 = areEPositionsInRightOrder ? e.getSource() : e.getTarget();
-        Position ePos2 = areEPositionsInRightOrder ? e.getTarget() : e.getSource();
-        boolean areFPositionsInRightOrder = f.getSource().toAdjacencyListIndex(board.getSize()) < f.getTarget().toAdjacencyListIndex(board.getSize());
-        Position fPos1 = areFPositionsInRightOrder ? f.getSource() : f.getTarget();
-        Position fPos2 = areFPositionsInRightOrder ? f.getTarget() : f.getSource();
+        Position[] ePositions = new Position[2];
+        int eIndex = normalizeEdgePositions(e, ePositions, board);
+
+        Position[] fPositions = new Position[2];
+        int fIndex = normalizeEdgePositions(f, fPositions, board);
 
         // Check if the barrier is two adjacent edges
-        boolean isHorizontalBarrier = ePos1.checkDistance(fPos1, 1, 0) && ePos2.checkDistance(fPos2, 1, 0);
-        boolean isVerticalBarrier = ePos1.checkDistance(fPos1, 0, 1) && ePos2.checkDistance(fPos2, 0, 1);
+        boolean isHorizontalBarrier = ePositions[0].checkDistance(fPositions[0], 1, 0) && ePositions[1].checkDistance(fPositions[1], 1, 0);
+        boolean isVerticalBarrier = ePositions[0].checkDistance(fPositions[0], 0, 1) && ePositions[1].checkDistance(fPositions[1], 0, 1);
         if (!isHorizontalBarrier && !isVerticalBarrier) return false;
 
         // Check if the barrier doesn't overlap another in the same orientation i.e. one of the edge is already a barrier
         if (e.getWeight() == 1 || f.getWeight() == 1) return false;
 
-        // Check if the barrier doesn't cross another barrier (in a + shape)
+        // Check if the barrier doesn't cross another 2-long barrier (in a + shape)
+        // We have to check that there is no barrier on the right of ePositions[0] and ePositions[1] (or at the bottom if a vertical barrier)
+        // but also that if there are two, they belong to two separate barriers (in a long + shape, kind of)
+        Map<Direction, Edge> neighbourList1 = ePositions[0].getNeighbourEdges(board);
+        Map<Direction, Edge> neighbourList2 = ePositions[1].getNeighbourEdges(board);
+
         if (
-            isHorizontalBarrier && checkBarrier(Direction.EAST, ePos1, board) && checkBarrier(Direction.EAST, ePos2, board) ||
-            isVerticalBarrier && checkBarrier(Direction.SOUTH, ePos1, board) && checkBarrier(Direction.SOUTH, ePos2, board)
+            isHorizontalBarrier &&
+                checkBarrier(Direction.EAST, ePositions[0], board) &&
+                checkBarrier(Direction.EAST, ePositions[1], board) &&
+                    (barrierList.stream().anyMatch(b -> (
+                        b.getEdge1() == neighbourList1.get(eIndex < fIndex ? Direction.EAST : Direction.WEST) &&
+                            b.getEdge2() == neighbourList2.get(eIndex < fIndex ? Direction.EAST : Direction.WEST) ||
+                        b.getEdge1() == neighbourList2.get(eIndex < fIndex ? Direction.EAST : Direction.WEST) &&
+                            b.getEdge2() == neighbourList1.get(eIndex < fIndex ? Direction.EAST : Direction.WEST)
+                    ))) ||
+            isVerticalBarrier &&
+                checkBarrier(Direction.SOUTH, ePositions[0], board) &&
+                checkBarrier(Direction.SOUTH, ePositions[1], board) &&
+                    (barrierList.stream().anyMatch(b -> (
+                        b.getEdge1() == neighbourList1.get(eIndex < fIndex ? Direction.SOUTH : Direction.NORTH) &&
+                            b.getEdge2() == neighbourList2.get(eIndex < fIndex ? Direction.SOUTH : Direction.NORTH) ||
+                        b.getEdge1() == neighbourList2.get(eIndex < fIndex ? Direction.SOUTH : Direction.NORTH) &&
+                            b.getEdge2() == neighbourList1.get(eIndex < fIndex ? Direction.SOUTH : Direction.NORTH)
+                    )))
         ) return false;
 
         // Check if the barrier doesn't cut any player from its goal
@@ -410,5 +431,27 @@ public class Player {
         f.setWeight(0);
 
         return isGameStillPossible;
+    }
+
+    /**
+     * Takes an edge and a list of Position to write in, and write the Positions so that the smallest in terms of adjacency list index is the first element, and the biggest the second
+     * @param e         edge on which we want the normalized positions
+     * @param positions list in which we write
+     * @param board     game board
+     * @return the adjacency list index of the smallest among the two positions
+     */
+    private int normalizeEdgePositions(Edge e, Position[] positions, Board board) {
+        int index1 = e.getSource().toAdjacencyListIndex(board.getSize());
+        int index2 = e.getTarget().toAdjacencyListIndex(board.getSize());
+
+        if (index1 < index2) {
+            positions[0] = e.getSource();
+            positions[1] = e.getTarget();
+            return index1;
+        } else {
+            positions[0] = e.getTarget();
+            positions[1] = e.getSource();
+            return index2;
+        }
     }
 }
