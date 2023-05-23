@@ -1,0 +1,15 @@
+.button {
+    -fx-background-color :  #C1E1FF;
+    -fx-background-radius: 20;
+    -fx-font-family: "Reem Kufi";
+    -fx-text-fill: black;
+    -fx-font-size: 42;
+}
+
+.button:hover {
+    -fx-background-color : #80c4ff;
+}
+
+.button:pressed {
+    -fx-background-color: #299bff;
+}
