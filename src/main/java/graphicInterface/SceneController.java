@@ -53,7 +53,6 @@ public class SceneController {
         switch (id) {
             case ButtonId.NEW_GAME -> file = "newGame.fxml";
             case ButtonId.CONTINUE -> file = "continue.fxml";
-            case ButtonId.BACK -> file = "home.fxml";
             case ButtonId.TWO_PLAYERS, ButtonId.FOUR_PLAYERS -> file = "Board.fxml";
         }
 
