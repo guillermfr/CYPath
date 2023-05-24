@@ -180,49 +180,16 @@ public class GameController {
         // Monitor whether the barrier has to be placed horizontally or vertically
         BooleanProperty isBarrierHorizontal = new SimpleBooleanProperty(true);
 
-        EventHandler<MouseEvent> rootPaneEventHandler = new EventHandler<>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.getButton() == MouseButton.PRIMARY) {
-                    mainStackPane.setOnMouseClicked(e -> {
-                        if (e.getButton() == MouseButton.PRIMARY) {
-                            try {
-                                Edge[] edges = pxCoordsToBarrierCoords(e.getX(), e.getY(), game.getBoard(), isBarrierHorizontal.get(), panePadding, boxSize) ;
-                                if (edges == null) System.out.println("Can't place a barrier here");
-                                else {
-                                    boolean isBarrierValid = currentPlayer.placeBarrier(edges[0], edges[1], game.getBoard(), game.getPlayers(), game.getBoard().getBarriers());
-                                    if (isBarrierValid) {
-                                        Position[] positions1 = new Position[2];
-                                        edges[0].normalizeEdgePositions(positions1, game.getBoard());
-                                        Position[] positions2 = new Position[2];
-                                        edges[1].normalizeEdgePositions(positions2, game.getBoard());
-
-                                        Rectangle rectangle = createBarrier(positions1[0], positions2[0], panePadding, boxSize);
-                                        playersAndBarriersPane.getChildren().add(rectangle);
-
-                                        barrierCountLabel.setText(game.getBoard().getBarriers().size() + "/" + BARRIER_LIMIT);
-
-                                        // Reset handlers before going to next turn
-                                        mainStackPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
-                                        rootPane.setOnMouseClicked(null);
-                                        goToNextTurn(game, playerListFx, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
-                                    }
-                                }
-                            } catch (Exception ex) {
-                                System.out.println(ex);
-                            }
-                        }
-                    });
-                }
-
-                if (event.getButton() == MouseButton.SECONDARY) {
-                    isBarrierHorizontal.set(!isBarrierHorizontal.get());
-                    System.out.println("Now " + (isBarrierHorizontal.get() ? "horizontal" : "vertical"));
-                }
+        EventHandler<MouseEvent> rootPaneEventHandler = event -> {
+            if (event.getButton() == MouseButton.SECONDARY && !isModeMovePlayer.get()) {
+                isBarrierHorizontal.set(!isBarrierHorizontal.get());
+                System.out.println("Now " + (isBarrierHorizontal.get() ? "horizontal" : "vertical"));
             }
         };
 
-        // For moving the player
+        rootPane.setOnMouseClicked(rootPaneEventHandler);
+
+        // Default handler: moving the player
         EventHandler<MouseEvent> mainStackPanePlayerEventHandler = event -> {
             try {
                 if (event.getButton() == MouseButton.PRIMARY) {
@@ -235,8 +202,6 @@ public class GameController {
                         playerListFx[currentPlayerId].setCenterY(newCoords[1]);
 
                         if (game.checkVictory() == null) {
-                            mainStackPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, rootPaneEventHandler);
-                            rootPane.setOnMouseClicked(null);
                             goToNextTurn(game, playerListFx, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
                         } else System.out.println("Victoire de " + currentPlayer.getName()); // TODO : Victory screen or sth like that
                     }
@@ -246,22 +211,53 @@ public class GameController {
             }
         };
 
+        mainStackPane.setOnMouseClicked(mainStackPanePlayerEventHandler);
+
+        // Barrier placing handler
+        EventHandler<MouseEvent> mainStackPaneBarrierEventHandler = new EventHandler<>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    try {
+                        Edge[] edges = pxCoordsToBarrierCoords(event.getX(), event.getY(), game.getBoard(), isBarrierHorizontal.get(), panePadding, boxSize) ;
+                        if (edges == null) System.out.println("Can't place a barrier here");
+                        else {
+                            boolean isBarrierValid = currentPlayer.placeBarrier(edges[0], edges[1], game.getBoard(), game.getPlayers(), game.getBoard().getBarriers());
+                            if (isBarrierValid) {
+                                Position[] positions1 = new Position[2];
+                                edges[0].normalizeEdgePositions(positions1, game.getBoard());
+                                Position[] positions2 = new Position[2];
+                                edges[1].normalizeEdgePositions(positions2, game.getBoard());
+
+                                Rectangle rectangle = createBarrier(positions1[0], positions2[0], panePadding, boxSize);
+                                playersAndBarriersPane.getChildren().add(rectangle);
+
+                                barrierCountLabel.setText(game.getBoard().getBarriers().size() + "/" + BARRIER_LIMIT);
+
+                                // Remove barrier handlers before going to next turn
+                                mainStackPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+                                goToNextTurn(game, playerListFx, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        System.out.println(ex);
+                    }
+                }
+            }
+        };
+
         // Handle the switching and (de)activating the corresponding eventHandler
         playButton.setOnAction(e -> {
             if (isModeMovePlayer.get() && game.getBoard().getBarriers().size() < BARRIER_LIMIT) {
                 isModeMovePlayer.set(false);
                 playButton.setText("Move player");
-                mainStackPane.setOnMouseClicked(null);
-                rootPane.setOnMouseClicked(rootPaneEventHandler);
+                mainStackPane.setOnMouseClicked(mainStackPaneBarrierEventHandler);
             } else {
                 isModeMovePlayer.set(true);
                 playButton.setText("Place a barrier");
-                rootPane.setOnMouseClicked(null);
                 mainStackPane.setOnMouseClicked(mainStackPanePlayerEventHandler);
             }
         });
-
-        mainStackPane.setOnMouseClicked(mainStackPanePlayerEventHandler);
     }
 
     /**
@@ -323,7 +319,7 @@ public class GameController {
      * @param pos The player's position.
      * @param panePadding The padding value for the pane.
      * @param boxSize The size of each box in the grid.
-     * @return An array containing hte x and y pixel coordinate.
+     * @return An array containing the x and y pixel coordinates.
      */
     private double[] playerCoordsToPxCoords(Position pos, double panePadding, double boxSize) {
         double[] px = new double[2];
@@ -339,7 +335,7 @@ public class GameController {
      * @param y The y pixel coordinate.
      * @param panePadding The padding value for the pane.
      * @param boxSize The size of each box int the grid.
-     * @return An array containing the x and y player coordinate.
+     * @return An array containing the x and y player coordinates.
      */
     private int[] pxCoordsToPlayerCoords(double x, double y, double panePadding, double boxSize) {
         int[] pos = new int[2];
