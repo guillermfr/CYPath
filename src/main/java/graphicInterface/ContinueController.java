@@ -66,7 +66,7 @@ public class ContinueController extends SceneController implements Initializable
             // We pass through every file of the save directory and add them to a list of buttons
             for (File file : saveDir.listFiles()) {
                 Button button = new Button(file.getName());
-                button.getStyleClass().add("button");
+                button.getStyleClass().add("buttonMenu");
                 button.setMaxWidth(Double.MAX_VALUE);
 
                 list.add(button);
