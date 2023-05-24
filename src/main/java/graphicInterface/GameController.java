@@ -416,7 +416,7 @@ public class GameController {
      * @param isBarrierHorizontal A boolean indicating whether the barrier is horizontal (true) or vertical (false).
      * @param panePadding The padding value for the pane.
      * @param boxSize The size of each box in the grid.
-     * @return An array containing the two barrier positions.
+     * @return An array containing the two edges forming the barrier.
      * @throws BadPositionException If the calculated positions are invalid or out of bounds.
      */
     Edge[] pxCoordsToBarrierCoords(double x, double y, Board board, boolean isBarrierHorizontal, double panePadding, double boxSize) throws BadPositionException {
