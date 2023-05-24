@@ -1,3 +1,6 @@
+/**
+ * Module of the project.
+ */
 module graphicInterface {
     requires javafx.controls;
     requires javafx.fxml;
