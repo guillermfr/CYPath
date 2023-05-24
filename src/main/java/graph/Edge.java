@@ -124,7 +124,6 @@ public class Edge {
         }
 
         boolean isBarrierHorizontal = this.getTarget().checkDistance(this.getSource(), 0, 1);
-        System.out.println(isBarrierHorizontal);
         this.weight = weight;
         this.getTarget().getNeighbourEdges(board).get(isBarrierHorizontal ? Direction.NORTH : Direction.WEST).setWeight(weight);
     }
