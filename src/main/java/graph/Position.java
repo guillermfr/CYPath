@@ -112,8 +112,12 @@ public class Position {
      * @return a Map with every direction and the edge associated with the direction, if the direction exists.
      */
     public Map<Direction, Edge> getNeighbourEdges(EdgeWeightedGraph graph) {
+        // If the size of the graph is strictly lesser than 2, there are no neighbours
         if(graph.getSize() < 2) return null;
 
+        // We create the map that will be returned
+        // This map has directions as keys and edges as values
+        // So for each direction, there is an edge associated, if it exists
         Map<Direction, Edge> neighbours = new HashMap<Direction, Edge>();
         int index = this.toAdjacencyListIndex(graph.getSize());
 
@@ -143,9 +147,12 @@ public class Position {
     public Map<Direction, Position> getNeighbourPositions(EdgeWeightedGraph graph) {
         if(graph.getSize() < 2) return null;
 
+        // Similar to getNeighbourEdges, we create a map with directions as keys and in this case, positions as neighbours
         Map<Direction, Edge> edgeNeighbours = this.getNeighbourEdges(graph);
         Map<Direction, Position> positionNeighbours = new HashMap<Direction, Position>();
 
+        // We can re-use the method getNeighbourEdges
+        // We just have to get the neighbour edges and take every target Position of these edges
         for(Map.Entry<Direction, Edge> entry : edgeNeighbours.entrySet()) {
             positionNeighbours.put(entry.getKey(), entry.getValue().getTarget());
         }
