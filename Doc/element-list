@@ -1,5 +1,7 @@
-unnamed package
+module:graphicInterface
+constant
 enumeration
 exception
 gameObjects
 graph
+graphicInterface
