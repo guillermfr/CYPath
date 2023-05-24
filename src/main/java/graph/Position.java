@@ -26,7 +26,7 @@ public class Position {
      * Constructor method for the Position class.
      * @param x coordinate x
      * @param y coordinate y
-     * @throws BadPositionException if x or y is lesser than 0
+     * @throws BadPositionException if x or y is lesser than 0, throws an exception
      */
     public Position(int x, int y) throws BadPositionException {
         if(x < 0 || y < 0) {
@@ -36,6 +36,12 @@ public class Position {
         this.y = y;
     }
 
+    /**
+     * Constructor method for the Position class.
+     * This constructor takes an array of ints compared to the default one which takes 2 ints.
+     * @param ints An array of ints for the position.
+     * @throws BadPositionException if x or y is lesser than 0, throws an exception (from the default constructor)
+     */
     public Position(int[] ints) throws BadPositionException {
         this(ints[0], ints[1]);
     }
