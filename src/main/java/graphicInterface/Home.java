@@ -13,7 +13,7 @@ public class Home extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("home.fxml"));
             Parent root = loader.load();
 
-            Scene scene = new Scene(root, 1000, 800);
+            Scene scene = new Scene(root, 1920, 1080);
 
             stage.setTitle("test");
             stage.setScene(scene);
