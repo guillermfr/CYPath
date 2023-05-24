@@ -38,7 +38,7 @@ public class SceneController {
      * @param event The event that happened. In this case, it is a button click.
      * @throws IOException exception thrown if there is an error.
      */
-    public void switchScene(ActionEvent event) throws IOException, BadSizeException {
+    public void switchScene(ActionEvent event) throws Exception {
 
         // We get the id of the button clicked.
         String id = ((Control)event.getSource()).getId();
