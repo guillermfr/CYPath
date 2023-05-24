@@ -24,6 +24,9 @@ import javafx.scene.shape.Rectangle;
 
 import static java.lang.Math.floor;
 
+/**
+ * The GameController class controls the game logic and UI interactions in the application.
+ */
 public class GameController {
 
     private EdgeWeightedGraph graph;
@@ -51,6 +54,13 @@ public class GameController {
     Label barrierCountLabel;
     @FXML
     Button playButton;
+
+    /**
+     * Initializes the game with the specified number of players and board size.
+     * @param nbPlayers Number of player
+     * @param size The size of the board
+     * @throws Exception If an error occurs during initialization.
+     */
 
     public void init(int nbPlayers, int size) throws Exception {
         try {
@@ -103,6 +113,15 @@ public class GameController {
         gameTurn(nbPlayers, size, game, playerListFx, panePadding, boxSize);
     }
 
+    /**
+     * Initializes the players and their corresponding graphical representations.
+     * @param nbPlayers The number of players in the game.
+     * @param size The size of the game board.
+     * @param game The instance of the Game class.
+     * @param playerListFx An array to store the graphical representation of the players
+     * @param panePadding The padding value for the pane.
+     * @param boxSize The size of each box in the grid.
+     */
     private void initPlayers(int nbPlayers, int size, Game game, Circle[] playerListFx, double panePadding, double boxSize) {
         try {
             Board board = new Board(size);
@@ -126,6 +145,16 @@ public class GameController {
             System.out.println(e);
         }
     }
+
+    /**
+     * Performs a game turn for the current player, handling player's actions such as moving the player or placing barriers.
+     * @param nbPlayers The number of players in the game.
+     * @param size The size of the game board.
+     * @param game The instance of the Game class.
+     * @param playerListFx An array storing the graphical representation of the players.
+     * @param panePadding The padding value for the pane.
+     * @param boxSize The size of each box in the grid.
+     */
 
     private void gameTurn(int nbPlayers, int size, Game game, Circle[] playerListFx, double panePadding, double boxSize) {
         int currentPlayerId = game.getCurrentPlayerTurn(nbPlayers);
@@ -203,6 +232,15 @@ public class GameController {
         mainStackPane.setOnMouseClicked(mainStackPanePlayerEventHandler);
     }
 
+    /**
+     * Creates a graphical representation of a player at the specified position.
+     * @param pos The position of the player.
+     * @param panePadding The padding value of the pane.
+     * @param boxSize The size of each box in the grid.
+     * @param color The color of the player.
+     * @param id The ID of the player.
+     * @return The Circle object representing the player.
+     */
     private Circle createPlayer(Position pos, double panePadding, double boxSize, Color color, int id) {
         double[] pxCoords = playerCoordsToPxCoords(pos, panePadding, boxSize);
         Circle player = new Circle(pxCoords[0], pxCoords[1], boxSize / 2.5, color);
@@ -226,7 +264,13 @@ public class GameController {
         return player;
     }
 
-    // For Player
+    /**
+     * Converts player coordinates to pixel coordinates on the game board.
+     * @param pos The player's position.
+     * @param panePadding The padding value for the pane.
+     * @param boxSize The size of each box in the grid.
+     * @return An array containing hte x and y pixel coordinate.
+     */
     private double[] playerCoordsToPxCoords(Position pos, double panePadding, double boxSize) {
         double[] px = new double[2];
         px[0] = panePadding + (pos.getX() + 0.5) * boxSize + pos.getX() * GRID_GAP;
@@ -235,6 +279,14 @@ public class GameController {
         return px;
     }
 
+    /**
+     * Convert pixel coordinate to player coordinate on the game board.
+     * @param x The x pixel coordinate.
+     * @param y The y pixel coordinate.
+     * @param panePadding The padding value for the pane.
+     * @param boxSize The size of each box int the grid.
+     * @return An array containing the x and y player coordinate.
+     */
     private int[] pxCoordsToPlayerCoords(double x, double y, double panePadding, double boxSize) {
         int[] pos = new int[2];
 
@@ -246,12 +298,13 @@ public class GameController {
 
     // For Barrier
     /**
-     * Creates a barrier under or on the right of the two given positions
-     * @param pos1
-     * @param pos2
-     * @param boxSize
-     * @param panePadding
-     * @return
+     * Creates a graphical representation of a barrier under or on the right of the two given positions.
+     * @param pos1 The first position of the barrier.
+     * @param pos2 The second position of the barrier.
+     * @param boxSize The size of each box in the grid
+     * @param panePadding The padding value for the pane.
+     * @return The Rectangle object representing the barrier.
+     * @throws Exception If the positions do not form a valid horizontal or vertical barrier.
      */
     private Rectangle createBarrier(Position pos1, Position pos2, double panePadding, double boxSize) throws Exception {
         if (pos1.toAdjacencyListIndex(graph.getSize()) > pos2.toAdjacencyListIndex(graph.getSize())) {
@@ -301,6 +354,17 @@ public class GameController {
         return barrier;
     }
 
+    /**
+     * Convert pixel coordinates to barrier coordinates on the game board.
+     * @param x The x pixel coordinate.
+     * @param y The y pixel coordinate
+     * @param isBarrierHorizontal A boolean indicating whether the barrier is horizontal (true) or vertical (false).
+     * @param panePadding The padding value for the pane.
+     * @param boxSize The size of each box in the grid.
+     * @param board The game board.
+     * @return An array containing the two barrier positions.
+     * @throws BadPositionException If the calculated positions are invalid or out of bounds.
+     */
     Position[] pxCoordsToBarrierCoords(double x, double y, boolean isBarrierHorizontal, double panePadding, double boxSize, Board board) throws BadPositionException {
         Position[] positions = new Position[2];
 
