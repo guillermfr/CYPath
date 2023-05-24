@@ -78,18 +78,23 @@ public class EdgeWeightedGraph {
      * It creates a graph where every node is connected to nodes on its right, left, top and bottom.
      */
     public void initializeGraph(){
+        // For every node, we verify their "position" on the graph
         for (int y = 0; y < this.size; y++) {
             for (int x = 0; x < this.size; x++) {
                 try {
+                    // If the node isn't on the first line, then it has a node connected to it above
                     if(y > 0) {
                         addEdge(new Edge(new Position(x,y),new Position(x,y-1),0));
                     }
+                    // If the node isn't on the last line, then it has a node connected to it below
                     if(y < this.size - 1) {
                         addEdge(new Edge(new Position(x,y),new Position(x,y+1),0));
                     }
+                    // If the node isn't on the first column, then it has a node connected to it to its left
                     if(x > 0) {
                         addEdge(new Edge(new Position(x,y),new Position(x-1,y),0));
                     }
+                    // If the node isn't on the last column, then it has a node connected to it to its right
                     if(x < this.size - 1) {
                         addEdge(new Edge(new Position(x,y),new Position(x+1,y),0));
                     }
@@ -111,7 +116,9 @@ public class EdgeWeightedGraph {
      * @throws UnknownColorException if the color isn't valid, throws an exception
      */
     private void DFSUtil(Position pos, boolean[] visited, Color color, boolean[] reached) throws UnknownColorException {
+        // If the node isn't visited, we need to visit it
         if(!visited[pos.toAdjacencyListIndex(this.size)]) {
+            // Depending on the color, we check if every player has cleared path (with no barrier) to the side they need to reach
             switch (color) {
                 case BLUE -> {
                     if (pos.getY() == 0) reached[0] = true;
@@ -133,10 +140,14 @@ public class EdgeWeightedGraph {
                     throw new UnknownColorException("Unknown color");
                 }
             }
+
+            // We mark that the current node has been visited
             visited[pos.toAdjacencyListIndex(this.size)] = true;
 
+            // We get the neighbour edges of the current node
             Map<Direction, Edge> edgeNeighbours = pos.getNeighbourEdges(this);
 
+            // We visit every neighbour nodes if there is no barrier between the two nodes
             for(Map.Entry<Direction, Edge> entry : edgeNeighbours.entrySet()) {
                 if(entry.getValue().getWeight() == 0) {
                     this.DFSUtil(entry.getValue().getTarget(), visited, color, reached);
@@ -153,6 +164,7 @@ public class EdgeWeightedGraph {
      * @return true if the player has a path, false if not.
      */
     public boolean DFS(Position pos, Color color) {
+        // Creation of the array of visited nodes and the boolean to know if the side can be reached or not
         boolean[] visited = new boolean[this.size*this.size];
         boolean[] reached = new boolean[1];
 
@@ -173,8 +185,10 @@ public class EdgeWeightedGraph {
      * @return a map with every player and a boolean which is true if the corresponding player has a path.
      */
     public Map<Player, Boolean> checkPath(List<Player> players) {
+        // We create a map with players as keys and boolean as values
         Map<Player, Boolean> checkPathPlayers = new HashMap<Player, Boolean>();
 
+        // For every player, we check if there is a path between his position and the side he needs to reach
         for (Player p : players) {
             checkPathPlayers.put(p, this.DFS(p.getPosition(), p.getColor()));
         }
@@ -218,17 +232,6 @@ public class EdgeWeightedGraph {
                 }
             }
             System.out.println();
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            EdgeWeightedGraph test = new EdgeWeightedGraph(4);
-            test.initializeGraph();
-            System.out.println(test);
-        }
-        catch (Exception exception) {
-            System.out.println(exception);
         }
     }
 
