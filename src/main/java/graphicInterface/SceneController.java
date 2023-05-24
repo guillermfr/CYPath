@@ -33,6 +33,11 @@ public class SceneController {
     private Parent root;
 
     /**
+     * Default constructor of the SceneController class.
+     */
+    public SceneController() {}
+
+    /**
      * Handler for the buttons.
      * Depending on the button, the user will be redirected on a new scene.
      * @param event The event that happened. In this case, it is a button click.

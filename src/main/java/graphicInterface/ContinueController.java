@@ -38,6 +38,11 @@ public class ContinueController extends SceneController implements Initializable
     BorderPane borderPane;
 
     /**
+     * Default constructor of the ContinueController class.
+     */
+    public ContinueController() {}
+
+    /**
      * This method initialize the Continue scene.
      * We get the saves from the save folder, then display them, and if there are none, we display a message.
      */

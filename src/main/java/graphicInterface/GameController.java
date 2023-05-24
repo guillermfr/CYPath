@@ -56,12 +56,16 @@ public class GameController {
     Button playButton;
 
     /**
+     * Default constructor of the GameController class.
+     */
+    public GameController() {}
+
+    /**
      * Initializes the game with the specified number of players and board size.
      * @param nbPlayers Number of player
      * @param size The size of the board
      * @throws Exception If an error occurs during initialization.
      */
-
     public void init(int nbPlayers, int size) throws Exception {
         try {
             graph = new EdgeWeightedGraph(size);

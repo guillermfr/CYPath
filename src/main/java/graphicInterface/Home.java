@@ -11,6 +11,12 @@ import javafx.stage.Stage;
  * It loads and displays the "home.fxml" scene.
  */
 public class Home extends Application {
+
+    /**
+     * Default constructor of the Home class.
+     */
+    public Home() {}
+
     /**
      * The start() method is called when the JavaFX application is launched.
      * It loads the "home.fxml" file, creates a scene, and displays it in the stage.
