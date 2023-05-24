@@ -125,7 +125,7 @@ public class EdgeWeightedGraph {
                 }
 
                 case YELLOW -> {
-                    if (pos.getY() == this.size) reached[0] = true;
+                    if (pos.getY() == this.size - 1) reached[0] = true;
                 }
 
                 case RED -> {
@@ -133,7 +133,7 @@ public class EdgeWeightedGraph {
                 }
 
                 case GREEN -> {
-                    if (pos.getX() == this.size) reached[0] = true;
+                    if (pos.getX() == this.size - 1) reached[0] = true;
                 }
 
                 default -> {
