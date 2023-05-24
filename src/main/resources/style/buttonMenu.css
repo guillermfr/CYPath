@@ -1,4 +1,4 @@
-.button {
+.buttonMenu {
     -fx-background-color :  #C1E1FF;
     -fx-background-radius: 20;
     -fx-font-family: "Reem Kufi";
@@ -6,10 +6,14 @@
     -fx-font-size: 42;
 }
 
-.button:hover {
+.buttonMenu:hover {
     -fx-background-color : #80c4ff;
 }
 
-.button:pressed {
+.buttonMenu:pressed {
     -fx-background-color: #299bff;
+}
+
+.back {
+    -fx-background-color :  transparent;
 }
