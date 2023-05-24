@@ -100,7 +100,7 @@ public class Player {
      * @param y             y coordinate of the to-be location
      * @param board         game board
      * @param playerList    list of all players on the board
-     * @return true if the move was made
+     * @return Whether the player was moved or not
      * @throws UnknownDirectionException if at some point, a direction is not valid
      * @throws BadPositionException if x or y is lesser than 0
      */
@@ -120,6 +120,7 @@ public class Player {
      * @param board         game board
      * @param playerList    list of all players on the board
      * @param barrierList   list of all barriers on the board
+     * @return Whether the barrier was placed or not
      * @throws BadWeightException if the weight is negative
      */
     public boolean placeBarrier(Edge e, Edge f, Board board, List<Player> playerList, List<Barrier> barrierList) throws BadWeightException {
