@@ -392,7 +392,7 @@ public class Player {
      * @param f             second edge on which the barrier is placed
      * @param board         game board
      * @param playerList    list of all players on the board
-     * @param barrierList   
+     * @param barrierList   list of all barriers on the board
      * @return if the given barrier would be valid if placed
      * @throws BadWeightException if the weight is negative
      */
