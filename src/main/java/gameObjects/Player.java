@@ -12,6 +12,11 @@ import graph.Edge;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class that represents a player.
+ * A player has a name, a Position and a color.
+ * A player can move and place a barrier.
+ */
 public class Player {
     /**
      * Name of the player
@@ -114,6 +119,7 @@ public class Player {
      * @param f             second edge on which the barrier is placed
      * @param board         game board
      * @param playerList    list of all players on the board
+     * @param barrierList   list of all barriers on the board
      * @throws BadWeightException if the weight is negative
      */
     public void placeBarrier(Edge e, Edge f, Board board, List<Player> playerList, List<Barrier> barrierList) throws BadWeightException {
