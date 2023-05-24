@@ -41,7 +41,7 @@ public class SceneController {
      * Handler for the buttons.
      * Depending on the button, the user will be redirected on a new scene.
      * @param event The event that happened. In this case, it is a button click.
-     * @throws IOException exception thrown if there is an error.
+     * @throws Exception exception thrown if there is an error.
      */
     public void switchScene(ActionEvent event) throws Exception {
 
