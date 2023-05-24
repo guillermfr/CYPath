@@ -1,6 +1,8 @@
 package graph;
 
+import enumeration.Direction;
 import exception.BadWeightException;
+import gameObjects.Board;
 
 /**
  * Edge is used for the adjacency list. It represents a link between two Positions.
@@ -87,6 +89,44 @@ public class Edge {
             throw new BadWeightException();
         }
         this.weight = weight;
+    }
+
+    /**
+     * Takes an edge and a list of Position to write in, and write the Positions so that the smallest in terms of adjacency list index is the first element, and the biggest the second
+     * @param positions list in which we write
+     * @param board     game board
+     * @return the adjacency list index of the smallest among the two positions
+     */
+    public int normalizeEdgePositions(Position[] positions, Board board) {
+        int index1 = this.getSource().toAdjacencyListIndex(board.getSize());
+        int index2 = this.getTarget().toAdjacencyListIndex(board.getSize());
+
+        if (index1 < index2) {
+            positions[0] = this.getSource();
+            positions[1] = this.getTarget();
+            return index1;
+        } else {
+            positions[0] = this.getTarget();
+            positions[1] = this.getSource();
+            return index2;
+        }
+    }
+
+    /**
+     * Sets the weight of an edge and of its opposite
+     * @param weight    weight to set to the edge
+     * @param board     game board
+     * @throws BadWeightException if the value is negative, throws an exception.
+     */
+    public void setBidirectionalEdgeWeight(int weight, Board board) throws BadWeightException {
+        if (weight < 0) {
+            throw new BadWeightException();
+        }
+
+        boolean isBarrierHorizontal = this.getTarget().checkDistance(this.getSource(), 0, 1);
+        System.out.println(isBarrierHorizontal);
+        this.weight = weight;
+        this.getTarget().getNeighbourEdges(board).get(isBarrierHorizontal ? Direction.NORTH : Direction.WEST).setWeight(weight);
     }
 
     @Override
