@@ -1,17 +1,17 @@
 package graphicInterface;
 
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Control;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * This class manages the back button.
+ */
 public class BackButtonController {
 
     /**
@@ -27,9 +27,17 @@ public class BackButtonController {
      */
     private Parent root;
 
-    @FXML
-    Button back;
+    /**
+     * Default constructor of the BackButtonController class.
+     */
+    public BackButtonController() {}
 
+    /**
+     * Handler for the back button.
+     * If this button is clicked, the user is redirected to the Home scene.
+     * @param event The event that happened. In this case, it is a button click.
+     * @throws IOException exception thrown if there is an error.
+     */
     public void back(ActionEvent event) throws IOException {
         String file = "home.fxml";
 
