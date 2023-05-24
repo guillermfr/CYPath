@@ -122,12 +122,17 @@ public class Player {
      * @param barrierList   list of all barriers on the board
      * @throws BadWeightException if the weight is negative
      */
-    public void placeBarrier(Edge e, Edge f, Board board, List<Player> playerList, List<Barrier> barrierList) throws BadWeightException {
+    public boolean placeBarrier(Edge e, Edge f, Board board, List<Player> playerList, List<Barrier> barrierList) throws BadWeightException {
         if (this.isBarrierValid(e, f, board, playerList, barrierList)) {
-            e.setWeight(1);
-            f.setWeight(1);
+            e.setBidirectionalEdgeWeight(1, board);
+            f.setBidirectionalEdgeWeight(1, board);
+
             barrierList.add(new Barrier(e, f, this));
+
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -391,12 +396,17 @@ public class Player {
      * @throws BadWeightException if the weight is negative
      */
     private boolean isBarrierValid(Edge e, Edge f, Board board, List<Player> playerList, List<Barrier> barrierList) throws BadWeightException {
+        final int BARRIER_LIMIT = 20;
+
+        // Check if there are less than twenty barriers
+        if (barrierList.size() >= BARRIER_LIMIT) return false;
+
         // We will get the Positions from smallest to biggest (in terms of adjacency list index)
         Position[] ePositions = new Position[2];
-        int eIndex = normalizeEdgePositions(e, ePositions, board);
+        int eIndex = e.normalizeEdgePositions(ePositions, board);
 
         Position[] fPositions = new Position[2];
-        int fIndex = normalizeEdgePositions(f, fPositions, board);
+        int fIndex = f.normalizeEdgePositions(fPositions, board);
 
         // Check if the barrier is two adjacent edges
         boolean isHorizontalBarrier = ePositions[0].checkDistance(fPositions[0], 1, 0) && ePositions[1].checkDistance(fPositions[1], 1, 0);
@@ -435,35 +445,13 @@ public class Player {
 
         // Check if the barrier doesn't cut any player from its goal
         // Temporarily accept the barriers as valid to check if they would be
-        e.setWeight(1);
-        f.setWeight(1);
+        e.setBidirectionalEdgeWeight(1, board);
+        f.setBidirectionalEdgeWeight(1, board);
         boolean isGameStillPossible = !board.checkPath(playerList).containsValue(false);
         // Remove them
-        e.setWeight(0);
-        f.setWeight(0);
+        e.setBidirectionalEdgeWeight(0, board);
+        f.setBidirectionalEdgeWeight(0, board);
 
         return isGameStillPossible;
-    }
-
-    /**
-     * Takes an edge and a list of Position to write in, and write the Positions so that the smallest in terms of adjacency list index is the first element, and the biggest the second
-     * @param e         edge on which we want the normalized positions
-     * @param positions list in which we write
-     * @param board     game board
-     * @return the adjacency list index of the smallest among the two positions
-     */
-    private int normalizeEdgePositions(Edge e, Position[] positions, Board board) {
-        int index1 = e.getSource().toAdjacencyListIndex(board.getSize());
-        int index2 = e.getTarget().toAdjacencyListIndex(board.getSize());
-
-        if (index1 < index2) {
-            positions[0] = e.getSource();
-            positions[1] = e.getTarget();
-            return index1;
-        } else {
-            positions[0] = e.getTarget();
-            positions[1] = e.getSource();
-            return index2;
-        }
     }
 }
