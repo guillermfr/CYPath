@@ -146,7 +146,7 @@ public class Player {
      * @throws UnknownDirectionException if direction is not a valid direction
      * @throws BadPositionException if x or y is lesser than 0
      */
-    private boolean isMoveValid(int x, int y, Board board, List<Player> playerList) throws Exception {
+    public boolean isMoveValid(int x, int y, Board board, List<Player> playerList) throws Exception {
         Position playerPos = this.position;
         int playerX = playerPos.getX();
         int playerY = playerPos.getY();

@@ -3,8 +3,7 @@ package graphicInterface;
 import enumeration.Direction;
 import exception.BadPositionException;
 import exception.BadSizeException;
-import exception.BadWeightException;
-import gameObjects.Barrier;
+import exception.UnknownPlayerIdException;
 import gameObjects.Board;
 import gameObjects.Game;
 import gameObjects.Player;
@@ -12,7 +11,9 @@ import graph.Edge;
 import graph.EdgeWeightedGraph;
 import graph.Position;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -24,6 +25,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+
+import java.util.ArrayList;
 
 import static java.lang.Math.*;
 
@@ -137,19 +140,19 @@ public class GameController {
             game.initGame(nbPlayers, size);
 
             if (nbPlayers >= 2) {
-                Circle yellowPlayer = createPlayer(0, game.getPlayers().get(0).getPosition(), Color.web("#F2F47E"), panePadding, boxSize);
-                Circle bluePlayer = createPlayer(1, game.getPlayers().get(1).getPosition(), Color.web("#525EC8"), panePadding, boxSize);
+                Circle yellowPlayer = createPlayer(0, game.getPlayers().get(0).getPosition(), false, panePadding, boxSize);
+                Circle bluePlayer = createPlayer(1, game.getPlayers().get(1).getPosition(), false, panePadding, boxSize);
                 playerListFx[0] = yellowPlayer;
                 playerListFx[1] = bluePlayer;
             }
 
             if (nbPlayers == 4) {
-                Circle redPlayer = createPlayer(2, game.getPlayers().get(2).getPosition(), Color.web("#F17171"), panePadding, boxSize);
-                Circle greenPlayer = createPlayer(3, game.getPlayers().get(3).getPosition(), Color.web("#7DE187"), panePadding, boxSize);
+                Circle redPlayer = createPlayer(2, game.getPlayers().get(2).getPosition(), false, panePadding, boxSize);
+                Circle greenPlayer = createPlayer(3, game.getPlayers().get(3).getPosition(), false, panePadding, boxSize);
                 playerListFx[2] = redPlayer;
                 playerListFx[3] = greenPlayer;
             }
-        } catch (BadSizeException e) {
+        } catch (UnknownPlayerIdException | BadSizeException e) {
             System.out.println(e);
         }
     }
@@ -164,7 +167,7 @@ public class GameController {
      * @param panePadding The padding value for the pane.
      * @param boxSize The size of each box in the grid.
      */
-    private void gameTurn(Game game, Circle[] playerListFx, Pane playersAndBarriersPane, int nbPlayers, int size, double panePadding, double boxSize) {
+    private void gameTurn(Game game, Circle[] playerListFx, Pane playersAndBarriersPane, int nbPlayers, int size, double panePadding, double boxSize) throws Exception {
         int currentPlayerId = game.getCurrentPlayerTurn(nbPlayers);
         Player currentPlayer = game.getPlayers().get(currentPlayerId);
 
@@ -173,6 +176,22 @@ public class GameController {
 
         // Update turn count on the side
         turnCountLabel.setText("Turn " + (game.getTurnCount() + 1));
+
+        // Show all possible moves to the player
+        ArrayList<Circle> ghostPlayers = new ArrayList<>(); // There can be at most 6 ghost players
+        int[][] possibleMovesOffsets = new int[][]{{0, -2}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {1, 0}, {2, 0}, {-1, 1}, {0, 1}, {1, 1}, {0, 2}};
+        for (int[] offsets : possibleMovesOffsets) {
+            int x = currentPlayer.getPosition().getX() + offsets[0];
+            int y = currentPlayer.getPosition().getY() + offsets[1];
+            boolean isMoveValid = currentPlayer.isMoveValid(x, y, game.getBoard(), game.getPlayers());
+
+            if (isMoveValid) {
+                Circle ghostPlayer = createPlayer(currentPlayerId, new Position(x, y), true, panePadding, boxSize);
+
+                playersAndBarriersPane.getChildren().add(ghostPlayer);
+                ghostPlayers.add(ghostPlayer);
+            }
+        }
 
         // Handle player's turn
         // Monitor the current mode between move player and placing barrier
@@ -183,7 +202,6 @@ public class GameController {
         EventHandler<MouseEvent> rootPaneEventHandler = event -> {
             if (event.getButton() == MouseButton.SECONDARY && !isModeMovePlayer.get()) {
                 isBarrierHorizontal.set(!isBarrierHorizontal.get());
-                System.out.println("Now " + (isBarrierHorizontal.get() ? "horizontal" : "vertical"));
             }
         };
 
@@ -202,7 +220,7 @@ public class GameController {
                         playerListFx[currentPlayerId].setCenterY(newCoords[1]);
 
                         if (game.checkVictory() == null) {
-                            goToNextTurn(game, playerListFx, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
+                            goToNextTurn(game, playerListFx, ghostPlayers, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
                         } else System.out.println("Victoire de " + currentPlayer.getName()); // TODO : Victory screen or sth like that
                     }
                 }
@@ -224,19 +242,14 @@ public class GameController {
                         else {
                             boolean isBarrierValid = currentPlayer.placeBarrier(edges[0], edges[1], game.getBoard(), game.getPlayers(), game.getBoard().getBarriers());
                             if (isBarrierValid) {
-                                Position[] positions1 = new Position[2];
-                                edges[0].normalizeEdgePositions(positions1, game.getBoard());
-                                Position[] positions2 = new Position[2];
-                                edges[1].normalizeEdgePositions(positions2, game.getBoard());
-
-                                Rectangle rectangle = createBarrier(positions1[0], positions2[0], panePadding, boxSize);
+                                Rectangle rectangle = createBarrier(edges[0], edges[1], false, game.getBoard(), panePadding, boxSize);
                                 playersAndBarriersPane.getChildren().add(rectangle);
 
                                 barrierCountLabel.setText(game.getBoard().getBarriers().size() + "/" + BARRIER_LIMIT);
 
                                 // Remove barrier handlers before going to next turn
                                 mainStackPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
-                                goToNextTurn(game, playerListFx, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
+                                goToNextTurn(game, playerListFx, ghostPlayers, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
                             }
                         }
                     } catch (Exception ex) {
@@ -246,15 +259,65 @@ public class GameController {
             }
         };
 
+        IntegerProperty lastBarrierX = new SimpleIntegerProperty(-1);
+        IntegerProperty lastBarrierY = new SimpleIntegerProperty(-1);
+        Rectangle[] previousGhostBarrier = new Rectangle[1];
+        mainStackPane.setOnMouseMoved(e -> {
+            double x = e.getX() - panePadding;
+            double y = e.getY() - panePadding;
+            if (x > 0 && x < mainStackPane.getHeight() - panePadding * 2 && y > 0 && y < mainStackPane.getHeight() - panePadding * 2) {
+                if (!isModeMovePlayer.get()) {
+                    try {
+                        Edge[] edges = pxCoordsToBarrierCoords(e.getX(), e.getY(), game.getBoard(), isBarrierHorizontal.get(), panePadding, boxSize);
+                        if (edges != null && (lastBarrierX.get() != edges[0].getSource().getX() || lastBarrierY.get() != edges[0].getSource().getY())) {
+                            if (lastBarrierX.get() != -1 && lastBarrierY.get() != -1) playersAndBarriersPane.getChildren().remove(previousGhostBarrier[0]);
+                            Rectangle ghostBarrier = createBarrier(edges[0], edges[1], true, game.getBoard(), panePadding, boxSize);
+                            playersAndBarriersPane.getChildren().add(ghostBarrier);
+                            previousGhostBarrier[0] = ghostBarrier;
+                            lastBarrierX.set(edges[0].getSource().getX());
+                            lastBarrierY.set(edges[0].getSource().getY());
+                        }
+                    } catch (Exception ex) {
+                        System.out.println(ex);
+                    }
+                }
+            }
+
+            if (previousGhostBarrier[0] != null) {
+                if (isBarrierHorizontal.get()) {
+                    System.out.println(abs(y - (previousGhostBarrier[0].getY() + boxSize + (double) GRID_GAP / 2)));
+                    System.out.println((BARRIER_SIZE * GRID_GAP) / 2 + boxSize * 0.1);
+                    System.out.println(abs(x - (previousGhostBarrier[0].getX() + previousGhostBarrier[0].getWidth() / 2)));
+                    System.out.println(previousGhostBarrier[0].getWidth() / 2);
+                    if (abs(y - (previousGhostBarrier[0].getY() + boxSize + (double) GRID_GAP / 2)) >= (BARRIER_SIZE * GRID_GAP) / 2 + boxSize * 0.1 || abs(x - (previousGhostBarrier[0].getX() + previousGhostBarrier[0].getWidth() / 2)) >= previousGhostBarrier[0].getWidth() / 2) {
+                        playersAndBarriersPane.getChildren().remove(previousGhostBarrier[0]);
+                        previousGhostBarrier[0] = null;
+                    }
+                }
+            }
+
+
+        });
+
         // Handle the switching and (de)activating the corresponding eventHandler
         playButton.setOnAction(e -> {
             if (isModeMovePlayer.get() && game.getBoard().getBarriers().size() < BARRIER_LIMIT) {
                 isModeMovePlayer.set(false);
                 playButton.setText("Move player");
+
+                for (Circle ghostPlayer : ghostPlayers) {
+                    playersAndBarriersPane.getChildren().remove(ghostPlayer);
+                }
+
                 mainStackPane.setOnMouseClicked(mainStackPaneBarrierEventHandler);
             } else {
                 isModeMovePlayer.set(true);
                 playButton.setText("Place a barrier");
+
+                for (Circle ghostPlayer : ghostPlayers) {
+                    playersAndBarriersPane.getChildren().add(ghostPlayer);
+                }
+
                 mainStackPane.setOnMouseClicked(mainStackPanePlayerEventHandler);
             }
         });
@@ -264,6 +327,7 @@ public class GameController {
      * Proceeds to the next turn and resets properties and handlers
      * @param game                      The instance of the Game class
      * @param playerListFx              An array storing the graphical representation of the players
+     * @param ghostPlayers              The ArrayList containing all ghost players of the current player
      * @param playersAndBarriersPane    The pane on which the players and barriers are
      * @param isModeMovePlayer          Whether the mode was move player or not
      * @param isBarrierHorizontal       Whether the barrier placing orientation was horizontal or vertical
@@ -272,11 +336,18 @@ public class GameController {
      * @param panePadding               The padding value for the pane
      * @param boxSize                   The size of each box in the grid
      */
-    private void goToNextTurn(Game game, Circle[] playerListFx, Pane playersAndBarriersPane, BooleanProperty isModeMovePlayer, BooleanProperty isBarrierHorizontal, int nbPlayers, int size, double panePadding, double boxSize) {
+    private void goToNextTurn(Game game, Circle[] playerListFx, ArrayList<Circle> ghostPlayers, Pane playersAndBarriersPane, BooleanProperty isModeMovePlayer, BooleanProperty isBarrierHorizontal, int nbPlayers, int size, double panePadding, double boxSize) throws Exception {
         // Reset properties and handlers
         if (!isModeMovePlayer.get()) isModeMovePlayer.set(true);
         if (!isBarrierHorizontal.get()) isBarrierHorizontal.set(true);
         playButton.setText("Place a barrier");
+
+        // Delete ghost players
+        for (Circle ghostPlayer : ghostPlayers) {
+            playersAndBarriersPane.getChildren().remove(ghostPlayer);
+        }
+
+        ghostPlayers.clear();
 
         game.setTurnCount(game.getTurnCount() + 1);
         gameTurn(game, playerListFx, playersAndBarriersPane, nbPlayers, size, panePadding, boxSize);
@@ -286,14 +357,46 @@ public class GameController {
      * Creates a graphical representation of a player at the specified position.
      * @param id The ID of the player.
      * @param pos The position of the player.
-     * @param color The color of the player.
+     * @param isGhost Whether the player to create is a ghost player or not
      * @param panePadding The padding value of the pane.
      * @param boxSize The size of each box in the grid.
      * @return The Circle object representing the player.
      */
-    private Circle createPlayer(int id, Position pos, Color color, double panePadding, double boxSize) {
+    private Circle createPlayer(int id, Position pos, boolean isGhost, double panePadding, double boxSize) throws UnknownPlayerIdException {
+
         double[] pxCoords = playerCoordsToPxCoords(pos, panePadding, boxSize);
-        Circle player = new Circle(pxCoords[0], pxCoords[1], boxSize / 2.5, color);
+
+        Circle player = new Circle(pxCoords[0], pxCoords[1], boxSize / 2.5);
+
+        String color, strokeColor;
+
+        switch (id) {
+            case 0 -> {
+                color = "#F2F47E";
+                strokeColor = "#CF8962";
+            }
+
+            case 1 -> {
+                color = "#525EC8";
+                strokeColor = "#282741";
+            }
+
+            case 2 -> {
+                color = "#F17171";
+                strokeColor = "#A73030";
+            }
+
+            case 3 -> {
+                color = "#7DE187";
+                strokeColor = "#419549";
+            }
+
+            default -> throw new UnknownPlayerIdException("This id isn't associated with any player");
+        }
+
+        player.setFill(Color.web(color, isGhost ? 0.3 : 1));
+        player.setStroke(Color.web(strokeColor, isGhost ? 0.3 : 1));
+        player.setStrokeWidth(1.0);
 
         DropShadow ds = new DropShadow();
         ds.setRadius(4.0);
@@ -301,15 +404,6 @@ public class GameController {
         ds.setOffsetY(4.0);
         ds.setColor(Color.web("#000000", 0.25));
         player.setEffect(ds);
-
-        switch (id) {
-            case 0 -> player.setStroke(Color.web("#CF8962"));
-            case 1 -> player.setStroke(Color.web("#282741"));
-            case 2 -> player.setStroke(Color.web("#A73030"));
-            case 3 -> player.setStroke(Color.web("#419549"));
-        }
-
-        player.setStrokeWidth(1.0);
 
         return player;
     }
@@ -349,14 +443,24 @@ public class GameController {
     // For Barrier
     /**
      * Creates a graphical representation of a barrier under or on the right of the two given positions.
-     * @param pos1 The first position of the barrier.
-     * @param pos2 The second position of the barrier.
+     * @param e1 The first edge of the barrier.
+     * @param e2 The second edge of the barrier.
+     * @param isGhost Whether the barrier is a ghost one or not
+     * @param board The game board
      * @param panePadding The padding value for the pane.
      * @param boxSize The size of each box in the grid
      * @return The Rectangle object representing the barrier.
      * @throws Exception If the positions do not form a valid horizontal or vertical barrier.
      */
-    private Rectangle createBarrier(Position pos1, Position pos2, double panePadding, double boxSize) throws Exception {
+    private Rectangle createBarrier(Edge e1, Edge e2, boolean isGhost, Board board, double panePadding, double boxSize) throws Exception {
+        Position[] positions1 = new Position[2];
+        e1.normalizeEdgePositions(positions1, board);
+        Position[] positions2 = new Position[2];
+        e2.normalizeEdgePositions(positions2, board);
+
+        Position pos1 = positions1[0];
+        Position pos2 = positions2[0];
+
         if (pos1.toAdjacencyListIndex(graph.getSize()) > pos2.toAdjacencyListIndex(graph.getSize())) {
             Position tempPos = pos1;
             pos1 = pos2;
@@ -364,7 +468,7 @@ public class GameController {
         }
 
         Rectangle barrier = new Rectangle();
-        barrier.setFill(Color.web("#101548"));
+        barrier.setFill(Color.web("#101548", isGhost ? 0.5 : 1));
 
         DropShadow ds = new DropShadow();
         ds.setRadius(4.0);
