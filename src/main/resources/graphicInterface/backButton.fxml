@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+
+<Button fx:id="back" mnemonicParsing="false" onAction="#back" styleClass="back" stylesheets="@../style/buttonMenu.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphicInterface.BackButtonController">
+   <graphic>
+      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/arrow.png" />
+         </image>
+      </ImageView>
+   </graphic>
+</Button>
