@@ -21,7 +21,7 @@
                         <Font name="Reem Kufi Regular" size="96.0" />
                      </font>
                   </Label>
-                  <Button fx:id="back" mnemonicParsing="false" onAction="#switchScene" StackPane.alignment="TOP_LEFT">
+                  <Button fx:id="back" mnemonicParsing="false" onAction="#switchScene" styleClass="back" stylesheets="@../style/buttonMenu.css" StackPane.alignment="TOP_LEFT">
                      <graphic>
                         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -41,12 +41,12 @@
             <Insets top="100.0" />
          </BorderPane.margin>
          <children>
-            <Button fx:id="twoPlayers" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchScene" stylesheets="@../style/buttonMenu.css" text="2 Players">
+            <Button fx:id="twoPlayers" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchScene" styleClass="buttonMenu" stylesheets="@../style/buttonMenu.css" text="2 Players">
                <font>
                   <Font name="Reem Kufi Regular" size="42.0" />
                </font>
             </Button>
-            <Button fx:id="fourPlayers" layoutX="10.0" layoutY="194.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchScene" stylesheets="@../style/buttonMenu.css" text="4 Players">
+            <Button fx:id="fourPlayers" layoutX="10.0" layoutY="194.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchScene" styleClass="buttonMenu" stylesheets="@../style/buttonMenu.css" text="4 Players">
                <font>
                   <Font name="Reem Kufi Regular" size="42.0" />
                </font>

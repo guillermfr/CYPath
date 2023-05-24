@@ -22,7 +22,7 @@
                         <Font name="Reem Kufi Regular" size="96.0" />
                      </font>
                   </Label>
-                  <Button fx:id="back" mnemonicParsing="false" onAction="#switchScene" StackPane.alignment="TOP_LEFT">
+                  <Button fx:id="back" mnemonicParsing="false" onAction="#switchScene" styleClass="back" StackPane.alignment="TOP_LEFT">
                      <graphic>
                         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>

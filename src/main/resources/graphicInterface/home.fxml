@@ -24,17 +24,17 @@
          <BorderPane.margin>
             <Insets top="100.0" />
          </BorderPane.margin>
-         <Button fx:id="buttonNewGame" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchScene" stylesheets="@../style/buttonMenu.css" text="New Game">
+         <Button fx:id="buttonNewGame" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchScene" styleClass="buttonMenu" stylesheets="@../style/buttonMenu.css" text="New Game">
             <font>
                <Font name="Reem Kufi Regular" size="42.0" />
             </font>
          </Button>
-         <Button fx:id="buttonContinue" layoutX="10.0" layoutY="194.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchScene" stylesheets="@../style/buttonMenu.css" text="Continue">
+         <Button fx:id="buttonContinue" layoutX="10.0" layoutY="194.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchScene" styleClass="buttonMenu" stylesheets="@../style/buttonMenu.css" text="Continue">
             <font>
                <Font name="Reem Kufi Regular" size="42.0" />
             </font>
          </Button>
-         <Button fx:id="buttonQuit" layoutX="10.0" layoutY="250.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exit" stylesheets="@../style/buttonMenu.css" text="Quit">
+         <Button fx:id="buttonQuit" layoutX="10.0" layoutY="250.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exit" styleClass="buttonMenu" stylesheets="@../style/buttonMenu.css" text="Quit">
             <font>
                <Font name="Reem Kufi Regular" size="42.0" />
             </font>
