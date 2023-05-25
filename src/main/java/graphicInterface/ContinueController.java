@@ -1,6 +1,7 @@
 package graphicInterface;
 
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -9,15 +10,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * This class manages the Continue scene.
@@ -29,13 +29,15 @@ public class ContinueController extends SceneController implements Initializable
      * List of the existing saves.
      */
     @FXML
-    ListView<Button> listContinue;
+    ListView<HBox> listContinue;
 
     /**
      * Borderpane of the scene.
      */
     @FXML
     BorderPane borderPane;
+
+    List<String> saveFiles;
 
     /**
      * Default constructor of the ContinueController class.
@@ -45,36 +47,69 @@ public class ContinueController extends SceneController implements Initializable
     /**
      * This method initialize the Continue scene.
      * We get the saves from the save folder, then display them, and if there are none, we display a message.
+     * There are 2 buttons next to the file name: the first one is to resume the game, and the second one is to delete the file.
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         // We get the path of the save directory
         URL saveURL = getClass().getResource("/save");
-        // If the folder exists and isn't empty
-        if(saveURL != null && !saveURL.getPath().isEmpty()) {
-            File saveDir = null;
 
-            try {
+        File saveDir = null;
+        try {
+            if(saveURL != null) {
                 saveDir = new File(saveURL.toURI());
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
             }
+        } catch (URISyntaxException e) {
+            System.out.println(e);
+        }
 
-            List<Button> list = new ArrayList<>();
+        // If the folder exists and isn't empty
+        if(saveDir != null && Objects.requireNonNull(saveDir.listFiles()).length != 0) {
+            saveFiles = new ArrayList<>();
+
+            List<HBox> list = new ArrayList<>();
 
             // We pass through every file of the save directory and add them to a list of buttons
-            for (File file : saveDir.listFiles()) {
-                Button button = new Button(file.getName());
-                button.getStyleClass().add("buttonMenu");
-                button.setMaxWidth(Double.MAX_VALUE);
+            for (File file : Objects.requireNonNull(saveDir.listFiles())) {
+                saveFiles.add(file.getPath());
 
-                list.add(button);
+                HBox saveHBox = new HBox();
+                saveHBox.getStyleClass().add("hBoxListView");
+                saveHBox.setMaxWidth(listContinue.getMaxWidth());
+
+                Label saveName = new Label(file.getName());
+                saveName.getStyleClass().add("labelSaveName");
+
+                Pane pane = new Pane();
+                HBox.setHgrow(pane, Priority.ALWAYS);
+
+                Button resumeButton = new Button("Resume");
+                resumeButton.getStyleClass().add("buttonContinueMenu");
+
+                Button deleteSaveButton = new Button("Delete");
+                deleteSaveButton.getStyleClass().add("buttonContinueMenu");
+                deleteSaveButton.setId(file.getPath());
+                deleteSaveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        saveFiles.remove(file.getPath());
+                        listContinue.getItems().remove(saveHBox);
+                        System.out.println(file.delete());
+                    }
+                });
+
+                saveHBox.getChildren().addAll(saveName, pane, resumeButton, deleteSaveButton);
+
+                list.add(saveHBox);
             }
 
             // We add the list of buttons to the ListView
             listContinue.setItems(FXCollections.observableList(list));
         } else {
+            saveDir = new File("target/classes/save");
+            saveDir.mkdir();
+
             // If there is no save file
             VBox vbox = new VBox();
 
@@ -88,7 +123,7 @@ public class ContinueController extends SceneController implements Initializable
             ImageView imageView = new ImageView(image);
             imageView.setStyle("-fx-border-color: black; -fx-border-width: 10");
 
-            // We had the label and the image to the VBox and then add it to the BorderPane
+            // We add the label and the image to the VBox and then add it to the BorderPane
             vbox.getChildren().add(imageView);
             vbox.getChildren().add(noSaveFile);
             vbox.setAlignment(Pos.TOP_CENTER);
