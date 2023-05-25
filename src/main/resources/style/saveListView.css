@@ -1,0 +1,26 @@
+.buttonContinueMenu {
+    -fx-font-size: 30;
+    -fx-background-color :  #C1E1FF;
+    -fx-background-radius: 20;
+    -fx-font-family: "Reem Kufi";
+    -fx-text-fill: black;
+}
+
+.buttonContinueMenu:hover {
+    -fx-background-color : #80c4ff;
+}
+
+.buttonContinueMenu:pressed {
+    -fx-background-color: #299bff;
+}
+
+.labelSaveName {
+    -fx-text-fill: #70b9fd;
+    -fx-font-size: 45;
+    -fx-font-family: "Reem Kufi";
+}
+
+.hBoxListView {
+    -fx-spacing: 10;
+    -fx-alignment: CENTER;
+}
