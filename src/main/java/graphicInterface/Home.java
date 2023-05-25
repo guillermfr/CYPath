@@ -6,6 +6,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import static constant.GraphicInterfaceSizes.SCREEN_HEIGHT;
+import static constant.GraphicInterfaceSizes.SCREEN_WIDTH;
+
 /**
  * The Home class represents the main entry point of the JavaFX application.
  * It loads and displays the "home.fxml" scene.
@@ -28,7 +31,7 @@ public class Home extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("home.fxml"));
             Parent root = loader.load();
 
-            Scene scene = new Scene(root, 1920, 1080);
+            Scene scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
 
             stage.setTitle("CYPath");
             stage.setScene(scene);
