@@ -295,7 +295,6 @@ public class GameController {
 
                                     @Override
                                     protected void interpolate(double v) {
-                                        Color color = Color.web("#FF0000", 1 - v);
                                         if (previousGhostBarrier[0] != null) previousGhostBarrier[0].setFill(new Color(1 - v, 0, 0, 0.5));
                                     }
                                 };
@@ -594,8 +593,6 @@ public class GameController {
             if (!isModeMovePlayer.get()) {
                 try {
                     Edge[] edges = pxCoordsToBarrierCoords(x + panePadding, y + panePadding, game.getBoard(), isBarrierHorizontal.get(), panePadding, boxSize);
-                    System.out.println(x);
-                    System.out.println(y);
                     if (edges != null && (lastBarrierX.get() != edges[0].getSource().getX() || lastBarrierY.get() != edges[0].getSource().getY())) {
                         Rectangle ghostBarrier = createBarrier(edges[0], edges[1], true, game.getBoard(), panePadding, boxSize);
                         playersAndBarriersPane.getChildren().add(ghostBarrier);
