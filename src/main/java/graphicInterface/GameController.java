@@ -32,6 +32,10 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 
+import static constant.BarrierProperties.BARRIER_LIMIT;
+import static constant.BarrierProperties.BARRIER_SIZE;
+import static constant.GraphicInterfaceSizes.GRID_GAP;
+import static constant.GraphicInterfaceSizes.SCREEN_HEIGHT;
 import static java.lang.Math.*;
 
 /**
@@ -40,13 +44,6 @@ import static java.lang.Math.*;
 public class GameController {
 
     private EdgeWeightedGraph graph;
-    private final static int STACK_PANE_HEIGHT = 400;
-    private final static int PANE_PADDING = 10;
-    private final static int GRID_GAP = 5;
-    private final static int SCREEN_WIDTH = 1920;
-    private final static int SCREEN_HEIGHT = 1080;
-    private final static double BARRIER_SIZE = 1.4;
-    private final static int BARRIER_LIMIT = 20;
 
     @FXML
     StackPane mainStackPane;
@@ -280,7 +277,12 @@ public class GameController {
                                 Rectangle rectangle = createBarrier(edges[0], edges[1], false, game.getBoard(), panePadding, boxSize);
                                 playersAndBarriersPane.getChildren().add(rectangle);
 
-                                barrierCountLabel.setText(game.getBoard().getBarriers().size() + "/" + BARRIER_LIMIT);
+                                int barrierCount = game.getBoard().getBarriers().size();
+                                barrierCountLabel.setText(barrierCount + "/" + BARRIER_LIMIT);
+                                if (barrierCount == BARRIER_LIMIT) {
+                                    playButton.getStyleClass().clear();
+                                    playButton.getStyleClass().add("unavailableButtonMenu");
+                                }
 
                                 // Remove barrier handlers before going to next turn
                                 mainStackPane.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
@@ -334,15 +336,17 @@ public class GameController {
 
         // Handle the switching and (de)activating the corresponding eventHandler
         playButton.setOnAction(e -> {
-            if (isModeMovePlayer.get() && game.getBoard().getBarriers().size() < BARRIER_LIMIT) {
-                isModeMovePlayer.set(false);
-                playButton.setText("Move player");
+            if (isModeMovePlayer.get()) {
+                if (game.getBoard().getBarriers().size() < BARRIER_LIMIT) {
+                    isModeMovePlayer.set(false);
+                    playButton.setText("Move player");
 
-                for (Circle ghostPlayer : ghostPlayers) {
-                    playersAndBarriersPane.getChildren().remove(ghostPlayer);
+                    for (Circle ghostPlayer : ghostPlayers) {
+                        playersAndBarriersPane.getChildren().remove(ghostPlayer);
+                    }
+
+                    mainStackPane.setOnMousePressed(mainStackPaneBarrierEventHandler);
                 }
-
-                mainStackPane.setOnMousePressed(mainStackPaneBarrierEventHandler);
             } else {
                 isModeMovePlayer.set(true);
                 playButton.setText("Place a barrier");
