@@ -3,6 +3,7 @@ package graph;
 import enumeration.Direction;
 import exception.BadPositionException;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import static java.lang.Math.abs;
 /**
  * Position is used for two purposes: to know where a player is on the board, and to create edges for the graph that represents the board.
  */
-public class Position {
+public class Position implements Serializable {
 
     /**
      * First component of the Position.

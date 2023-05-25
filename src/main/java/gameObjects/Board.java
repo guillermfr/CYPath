@@ -4,6 +4,7 @@ import exception.BadSizeException;
 import graph.EdgeWeightedGraph;
 import graph.Position;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * This class extends the EdgeWeightedGraph class because we wanted to separate these 2 classes.
  * Compared to the EdgeWeightedGraph class, this class includes a list of Barriers placed on the board.
  */
-public class Board extends EdgeWeightedGraph {
+public class Board extends EdgeWeightedGraph implements Serializable {
     /**
      * List of barriers placed on the board.
      */

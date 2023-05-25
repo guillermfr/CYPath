@@ -7,6 +7,7 @@ import exception.BadSizeException;
 import exception.UnknownColorException;
 import graph.Position;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * This class represents the whole game. It is useful to save everything we need to load a game later.
  * This class contains a board, a list of players and a turns' counter.
  */
-public class Game {
+public class Game implements Serializable {
     /**
      * Board of the game.
      */
@@ -195,5 +196,14 @@ public class Game {
     public int getCurrentPlayerTurn(int nbPlayers) {
         // TODO : on a pas besoin du nombre de joueurs en paramètre, on peut directement prendre la length de la liste de joueurs
         return this.turnCount % nbPlayers;
+    }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "board=" + board +
+                ", players=" + players +
+                ", turnCount=" + turnCount +
+                '}';
     }
 }

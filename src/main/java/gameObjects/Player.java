@@ -9,6 +9,7 @@ import exception.BadPositionException;
 import graph.Position;
 import graph.Edge;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ import java.util.Map;
  * A player has a name, a Position and a color.
  * A player can move and place a barrier.
  */
-public class Player {
+public class Player implements Serializable {
     /**
      * Name of the player
      * Its name will be displayed throughout the game

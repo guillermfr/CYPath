@@ -2,11 +2,13 @@ package gameObjects;
 
 import graph.Edge;
 
+import java.io.Serializable;
+
 /**
  * Class that represents a Barrier on the board.
  * A barrier is defined by 2 edges and by the player who placed it.
  */
-public class Barrier {
+public class Barrier implements Serializable {
     /**
      * First edge of the barrier.
      */

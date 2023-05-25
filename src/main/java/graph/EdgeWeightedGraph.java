@@ -8,13 +8,14 @@ import exception.BadWeightException;
 import exception.UnknownColorException;
 import gameObjects.Player;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * EdgeWeightedGraph represents the board of the game.
  * It is an edge weighted graph because we need to save the barriers, so we will change the weight of edges with a barrier.
  */
-public class EdgeWeightedGraph {
+public class EdgeWeightedGraph implements Serializable {
 
     /**
      * Size of the graph.

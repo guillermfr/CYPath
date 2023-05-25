@@ -4,11 +4,13 @@ import enumeration.Direction;
 import exception.BadWeightException;
 import gameObjects.Board;
 
+import java.io.Serializable;
+
 /**
  * Edge is used for the adjacency list. It represents a link between two Positions.
  * This class also has a weight. This will be useful to represent barriers.
  */
-public class Edge {
+public class Edge implements Serializable {
     /**
      * Source of the edge.
      */
