@@ -17,9 +17,11 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseButton;
@@ -29,8 +31,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import saveLoad.SaveFileName;
+import saveLoad.SerializationUtils;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static constant.BarrierProperties.BARRIER_LIMIT;
 import static constant.BarrierProperties.BARRIER_SIZE;
@@ -44,6 +49,8 @@ import static java.lang.Math.*;
 public class GameController {
 
     private EdgeWeightedGraph graph;
+    private Game game;
+    private String saveNameGeneral = "";
 
     @FXML
     StackPane mainStackPane;
@@ -115,26 +122,25 @@ public class GameController {
 
         mainStackPane.getChildren().add(playersAndBarriersPane);
 
-        Game game = new Game();
+        this.game = new Game();
         // Initialize
         Circle[] playerListFx = new Circle[nbPlayers];
-        initPlayers(game, playerListFx, nbPlayers, size, panePadding, boxSize);
+        initPlayers(playerListFx, nbPlayers, size, panePadding, boxSize);
         playersAndBarriersPane.getChildren().addAll(playerListFx);
 
         // Turns
-        gameTurn(game, playerListFx, playersAndBarriersPane, nbPlayers, size, panePadding, boxSize);
+        gameTurn(playerListFx, playersAndBarriersPane, nbPlayers, size, panePadding, boxSize);
     }
 
     /**
      * Initializes the players and their corresponding graphical representations.
-     * @param game The instance of the Game class.
      * @param playerListFx An array to store the graphical representation of the players
      * @param nbPlayers The number of players in the game.
      * @param size The size of the game board.
      * @param panePadding The padding value for the pane.
      * @param boxSize The size of each box in the grid.
      */
-    private void initPlayers(Game game, Circle[] playerListFx, int nbPlayers, int size, double panePadding, double boxSize) {
+    private void initPlayers(Circle[] playerListFx, int nbPlayers, int size, double panePadding, double boxSize) {
         try {
             Board board = new Board(size);
             game.setBoard(board);
@@ -160,7 +166,6 @@ public class GameController {
 
     /**
      * Performs a game turn for the current player, handling player's actions such as moving the player or placing barriers.
-     * @param game The instance of the Game class.
      * @param playerListFx An array storing the graphical representation of the players.
      * @param playersAndBarriersPane The pane on which the players and barriers are
      * @param nbPlayers The number of players in the game.
@@ -168,7 +173,7 @@ public class GameController {
      * @param panePadding The padding value for the pane.
      * @param boxSize The size of each box in the grid.
      */
-    private void gameTurn(Game game, Circle[] playerListFx, Pane playersAndBarriersPane, int nbPlayers, int size, double panePadding, double boxSize) throws Exception {
+    private void gameTurn(Circle[] playerListFx, Pane playersAndBarriersPane, int nbPlayers, int size, double panePadding, double boxSize) throws Exception {
         int currentPlayerId = game.getCurrentPlayerTurn(nbPlayers);
         Player currentPlayer = game.getPlayers().get(currentPlayerId);
 
@@ -213,7 +218,7 @@ public class GameController {
                         playerListFx[currentPlayerId].setCenterY(newCoords[1]);
 
                         if (game.checkVictory() == null) {
-                            goToNextTurn(game, playerListFx, ghostPlayers, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
+                            goToNextTurn(playerListFx, ghostPlayers, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
                         } else System.out.println("Victoire de " + currentPlayer.getName()); // TODO : Victory screen or sth like that
                     }
                 }
@@ -261,7 +266,7 @@ public class GameController {
                 }
             }
 
-            updateGhostBarrier(x, y, previousGhostBarrier, lastBarrierX, lastBarrierY, isModeMovePlayer, isBarrierHorizontal, game, playersAndBarriersPane, panePadding, boxSize);
+            updateGhostBarrier(x, y, previousGhostBarrier, lastBarrierX, lastBarrierY, isModeMovePlayer, isBarrierHorizontal, playersAndBarriersPane, panePadding, boxSize);
         });
 
         // Barrier placing handler
@@ -286,7 +291,7 @@ public class GameController {
 
                                 // Remove barrier handlers before going to next turn
                                 mainStackPane.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
-                                goToNextTurn(game, playerListFx, ghostPlayers, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
+                                goToNextTurn(playerListFx, ghostPlayers, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
                             } else {
                                 Animation animation = new Transition() {
                                     {
@@ -328,7 +333,7 @@ public class GameController {
                 lastBarrierX.set(-1);
                 lastBarrierY.set(-1);
 
-                updateGhostBarrier(event.getX() - panePadding, event.getY() - panePadding, previousGhostBarrier, lastBarrierX, lastBarrierY, isModeMovePlayer, isBarrierHorizontal, game, playersAndBarriersPane, panePadding, boxSize);
+                updateGhostBarrier(event.getX() - panePadding, event.getY() - panePadding, previousGhostBarrier, lastBarrierX, lastBarrierY, isModeMovePlayer, isBarrierHorizontal, playersAndBarriersPane, panePadding, boxSize);
             }
         };
 
@@ -362,7 +367,6 @@ public class GameController {
 
     /**
      * Proceeds to the next turn and resets properties and handlers
-     * @param game                      The instance of the Game class
      * @param playerListFx              An array storing the graphical representation of the players
      * @param ghostPlayers              The ArrayList containing all ghost players of the current player
      * @param playersAndBarriersPane    The pane on which the players and barriers are
@@ -373,7 +377,7 @@ public class GameController {
      * @param panePadding               The padding value for the pane
      * @param boxSize                   The size of each box in the grid
      */
-    private void goToNextTurn(Game game, Circle[] playerListFx, ArrayList<Circle> ghostPlayers, Pane playersAndBarriersPane, BooleanProperty isModeMovePlayer, BooleanProperty isBarrierHorizontal, int nbPlayers, int size, double panePadding, double boxSize) throws Exception {
+    private void goToNextTurn(Circle[] playerListFx, ArrayList<Circle> ghostPlayers, Pane playersAndBarriersPane, BooleanProperty isModeMovePlayer, BooleanProperty isBarrierHorizontal, int nbPlayers, int size, double panePadding, double boxSize) throws Exception {
         // Reset properties and handlers
         if (!isModeMovePlayer.get()) isModeMovePlayer.set(true);
         if (!isBarrierHorizontal.get()) isBarrierHorizontal.set(true);
@@ -387,7 +391,7 @@ public class GameController {
         ghostPlayers.clear();
 
         game.setTurnCount(game.getTurnCount() + 1);
-        gameTurn(game, playerListFx, playersAndBarriersPane, nbPlayers, size, panePadding, boxSize);
+        gameTurn(playerListFx, playersAndBarriersPane, nbPlayers, size, panePadding, boxSize);
     }
 
     /**
@@ -592,7 +596,7 @@ public class GameController {
         return edges;
     }
 
-    private void updateGhostBarrier(double x, double y, Rectangle[] previousGhostBarrier, IntegerProperty lastBarrierX, IntegerProperty lastBarrierY, BooleanProperty isModeMovePlayer, BooleanProperty isBarrierHorizontal, Game game, Pane playersAndBarriersPane, double panePadding, double boxSize) {
+    private void updateGhostBarrier(double x, double y, Rectangle[] previousGhostBarrier, IntegerProperty lastBarrierX, IntegerProperty lastBarrierY, BooleanProperty isModeMovePlayer, BooleanProperty isBarrierHorizontal, Pane playersAndBarriersPane, double panePadding, double boxSize) {
         if (x > 0 && x < mainStackPane.getHeight() - panePadding * 2 && y > 0 && y < mainStackPane.getHeight() - panePadding * 2) {
             if (!isModeMovePlayer.get()) {
                 try {
@@ -608,6 +612,19 @@ public class GameController {
                     System.out.println(ex);
                 }
             }
+        }
+    }
+
+    public void saveGame(ActionEvent eventHandler) {
+        if(saveNameGeneral.isEmpty()) {
+            Dialog<SaveFileName> saveNameDialog = new SaveNameDialog(new SaveFileName(""));
+            Optional<SaveFileName> saveName = saveNameDialog.showAndWait();
+            if(saveName.isPresent()) {
+                SerializationUtils.serialisationGame(this.game, saveName.get().getSaveName());
+                saveNameGeneral = saveName.get().getSaveName();
+            }
+        } else {
+            SerializationUtils.serialisationGame(this.game, saveNameGeneral);
         }
     }
 }
