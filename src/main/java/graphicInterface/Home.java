@@ -30,11 +30,10 @@ public class Home extends Application {
 
             Scene scene = new Scene(root, 1920, 1080);
 
-            stage.setTitle("test");
+            stage.setTitle("CYPath");
             stage.setScene(scene);
+            stage.setMaximized(true);
             stage.show();
-
-
         }
         catch (Exception e) {
             System.out.println(e);
