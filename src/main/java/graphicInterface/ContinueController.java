@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import saveLoad.CreateSaveDir;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -106,8 +107,9 @@ public class ContinueController extends SceneController implements Initializable
             // We add the list of buttons to the ListView
             listContinue.setItems(FXCollections.observableList(list));
         } else {
-            saveDir = new File("target/classes/save");
-            saveDir.mkdir();
+            //saveDir = new File("target/classes/save");
+            //saveDir.mkdir();
+            CreateSaveDir.createSaveDir();
 
             // If there is no save file
             VBox vbox = new VBox();

@@ -31,6 +31,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import saveLoad.CreateSaveDir;
 import saveLoad.SaveFileName;
 import saveLoad.SerializationUtils;
 
@@ -616,6 +617,7 @@ public class GameController {
     }
 
     public void saveGame(ActionEvent eventHandler) {
+        CreateSaveDir.createSaveDirWithTest();
         if(saveNameGeneral.isEmpty()) {
             Dialog<SaveFileName> saveNameDialog = new SaveNameDialog(new SaveFileName(""));
             Optional<SaveFileName> saveName = saveNameDialog.showAndWait();
