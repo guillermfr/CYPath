@@ -10,6 +10,9 @@ import gameObjects.Player;
 import graph.Edge;
 import graph.EdgeWeightedGraph;
 import graph.Position;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.Transition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -25,6 +28,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 
@@ -221,39 +225,12 @@ public class GameController {
             }
         };
 
-        mainStackPane.setOnMouseClicked(mainStackPanePlayerEventHandler);
-
-        // Barrier placing handler
-        EventHandler<MouseEvent> mainStackPaneBarrierEventHandler = new EventHandler<>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.getButton() == MouseButton.PRIMARY) {
-                    try {
-                        Edge[] edges = pxCoordsToBarrierCoords(event.getX(), event.getY(), game.getBoard(), isBarrierHorizontal.get(), panePadding, boxSize) ;
-                        if (edges == null) System.out.println("Can't place a barrier here");
-                        else {
-                            boolean isBarrierValid = currentPlayer.placeBarrier(edges[0], edges[1], game.getBoard(), game.getPlayers(), game.getBoard().getBarriers());
-                            if (isBarrierValid) {
-                                Rectangle rectangle = createBarrier(edges[0], edges[1], false, game.getBoard(), panePadding, boxSize);
-                                playersAndBarriersPane.getChildren().add(rectangle);
-
-                                barrierCountLabel.setText(game.getBoard().getBarriers().size() + "/" + BARRIER_LIMIT);
-
-                                // Remove barrier handlers before going to next turn
-                                mainStackPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
-                                goToNextTurn(game, playerListFx, ghostPlayers, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
-                            }
-                        }
-                    } catch (Exception ex) {
-                        System.out.println(ex);
-                    }
-                }
-            }
-        };
+        mainStackPane.setOnMousePressed(mainStackPanePlayerEventHandler);
 
         IntegerProperty lastBarrierX = new SimpleIntegerProperty(-1);
         IntegerProperty lastBarrierY = new SimpleIntegerProperty(-1);
         Rectangle[] previousGhostBarrier = new Rectangle[1];
+        Transition[] lastTransition = new Transition[1];
         mainStackPane.setOnMouseMoved(e -> {
             double x = e.getX() - panePadding;
             double y = e.getY() - panePadding;
@@ -274,6 +251,11 @@ public class GameController {
                     double prevGBCenterY = previousGhostBarrier[0].getY() - panePadding + (boxSize + GRID_GAP) / 2;
 
                     if (abs(x - prevGBCenterX) >= previousGhostBarrier[0].getWidth() / 2 || abs(y - prevGBCenterY) >= (previousGhostBarrier[0].getHeight() + GRID_GAP) / 4 || (previousGhostBarrier[0].getY() - panePadding) / (boxSize + GRID_GAP) >= 7) {
+                        if (lastTransition[0] != null) {
+                            lastTransition[0].stop();
+                            lastTransition[0] = null;
+                        }
+
                         playersAndBarriersPane.getChildren().remove(previousGhostBarrier[0]);
                         previousGhostBarrier[0] = null;
                         lastBarrierX.set(-1);
@@ -282,37 +264,74 @@ public class GameController {
                 }
             }
 
-            if (x > 0 && x < mainStackPane.getHeight() - panePadding * 2 && y > 0 && y < mainStackPane.getHeight() - panePadding * 2) {
-                if (!isModeMovePlayer.get()) {
+            updateGhostBarrier(x, y, previousGhostBarrier, lastBarrierX, lastBarrierY, isModeMovePlayer, isBarrierHorizontal, game, playersAndBarriersPane, panePadding, boxSize);
+        });
+
+        // Barrier placing handler
+        EventHandler<MouseEvent> mainStackPaneBarrierEventHandler = new EventHandler<>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
                     try {
-                        Edge[] edges = pxCoordsToBarrierCoords(e.getX(), e.getY(), game.getBoard(), isBarrierHorizontal.get(), panePadding, boxSize);
-                        if (edges != null && (lastBarrierX.get() != edges[0].getSource().getX() || lastBarrierY.get() != edges[0].getSource().getY())) {
-                            Rectangle ghostBarrier = createBarrier(edges[0], edges[1], true, game.getBoard(), panePadding, boxSize);
-                            playersAndBarriersPane.getChildren().add(ghostBarrier);
-                            previousGhostBarrier[0] = ghostBarrier;
-                            lastBarrierX.set(edges[0].getSource().getX());
-                            lastBarrierY.set(edges[0].getSource().getY());
+                        Edge[] edges = pxCoordsToBarrierCoords(event.getX(), event.getY(), game.getBoard(), isBarrierHorizontal.get(), panePadding, boxSize) ;
+                        if (edges != null) {
+                            boolean isBarrierValid = currentPlayer.placeBarrier(edges[0], edges[1], game.getBoard(), game.getPlayers(), game.getBoard().getBarriers());
+                            if (isBarrierValid) {
+                                Rectangle rectangle = createBarrier(edges[0], edges[1], false, game.getBoard(), panePadding, boxSize);
+                                playersAndBarriersPane.getChildren().add(rectangle);
+
+                                barrierCountLabel.setText(game.getBoard().getBarriers().size() + "/" + BARRIER_LIMIT);
+
+                                // Remove barrier handlers before going to next turn
+                                mainStackPane.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
+                                goToNextTurn(game, playerListFx, ghostPlayers, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
+                            } else {
+                                Animation animation = new Transition() {
+                                    {
+                                        setCycleDuration(Duration.millis(500));
+                                        setInterpolator(Interpolator.EASE_OUT);
+                                        lastTransition[0] = this;
+                                    }
+
+                                    @Override
+                                    protected void interpolate(double v) {
+                                        Color color = Color.web("#FF0000", 1 - v);
+                                        if (previousGhostBarrier[0] != null) previousGhostBarrier[0].setFill(new Color(1 - v, 0, 0, 0.5));
+                                    }
+                                };
+
+
+                                previousGhostBarrier[0].setFill(new Color(1, 0, 0, 0.5));
+                                animation.play();
+                            }
                         }
                     } catch (Exception ex) {
                         System.out.println(ex);
                     }
                 }
             }
-        });
+        };
 
         // Handle the switching between horizontal and vertical barrier
-        EventHandler<MouseEvent> rootPaneEventHandler = event -> {
+        EventHandler<MouseEvent> switchBarrierEventHandler = event -> {
             if (event.getButton() == MouseButton.SECONDARY && !isModeMovePlayer.get()) {
                 isBarrierHorizontal.set(!isBarrierHorizontal.get());
 
-                if (previousGhostBarrier[0] != null) {
-                    playersAndBarriersPane.getChildren().remove(previousGhostBarrier[0]);
-                    previousGhostBarrier[0] = null;
+                if (lastTransition[0] != null) {
+                    lastTransition[0].stop();
+                    lastTransition[0] = null;
                 }
+
+                playersAndBarriersPane.getChildren().remove(previousGhostBarrier[0]);
+                previousGhostBarrier[0] = null;
+                lastBarrierX.set(-1);
+                lastBarrierY.set(-1);
+
+                updateGhostBarrier(event.getX() - panePadding, event.getY() - panePadding, previousGhostBarrier, lastBarrierX, lastBarrierY, isModeMovePlayer, isBarrierHorizontal, game, playersAndBarriersPane, panePadding, boxSize);
             }
         };
 
-        rootPane.setOnMouseClicked(rootPaneEventHandler);
+        mainStackPane.setOnMouseClicked(switchBarrierEventHandler);
 
         // Handle the switching and (de)activating the corresponding eventHandler
         playButton.setOnAction(e -> {
@@ -324,7 +343,7 @@ public class GameController {
                     playersAndBarriersPane.getChildren().remove(ghostPlayer);
                 }
 
-                mainStackPane.setOnMouseClicked(mainStackPaneBarrierEventHandler);
+                mainStackPane.setOnMousePressed(mainStackPaneBarrierEventHandler);
             } else {
                 isModeMovePlayer.set(true);
                 playButton.setText("Place a barrier");
@@ -333,7 +352,7 @@ public class GameController {
                     playersAndBarriersPane.getChildren().add(ghostPlayer);
                 }
 
-                mainStackPane.setOnMouseClicked(mainStackPanePlayerEventHandler);
+                mainStackPane.setOnMousePressed(mainStackPanePlayerEventHandler);
             }
         });
     }
@@ -534,7 +553,7 @@ public class GameController {
      * @return An array containing the two edges forming the barrier.
      * @throws BadPositionException If the calculated positions are invalid or out of bounds.
      */
-    Edge[] pxCoordsToBarrierCoords(double x, double y, Board board, boolean isBarrierHorizontal, double panePadding, double boxSize) throws BadPositionException {
+    private Edge[] pxCoordsToBarrierCoords(double x, double y, Board board, boolean isBarrierHorizontal, double panePadding, double boxSize) throws BadPositionException {
         Edge[] edges = new Edge[2];
 
         if (isBarrierHorizontal) {
@@ -568,5 +587,26 @@ public class GameController {
         }
 
         return edges;
+    }
+
+    private void updateGhostBarrier(double x, double y, Rectangle[] previousGhostBarrier, IntegerProperty lastBarrierX, IntegerProperty lastBarrierY, BooleanProperty isModeMovePlayer, BooleanProperty isBarrierHorizontal, Game game, Pane playersAndBarriersPane, double panePadding, double boxSize) {
+        if (x > 0 && x < mainStackPane.getHeight() - panePadding * 2 && y > 0 && y < mainStackPane.getHeight() - panePadding * 2) {
+            if (!isModeMovePlayer.get()) {
+                try {
+                    Edge[] edges = pxCoordsToBarrierCoords(x + panePadding, y + panePadding, game.getBoard(), isBarrierHorizontal.get(), panePadding, boxSize);
+                    System.out.println(x);
+                    System.out.println(y);
+                    if (edges != null && (lastBarrierX.get() != edges[0].getSource().getX() || lastBarrierY.get() != edges[0].getSource().getY())) {
+                        Rectangle ghostBarrier = createBarrier(edges[0], edges[1], true, game.getBoard(), panePadding, boxSize);
+                        playersAndBarriersPane.getChildren().add(ghostBarrier);
+                        previousGhostBarrier[0] = ghostBarrier;
+                        lastBarrierX.set(edges[0].getSource().getX());
+                        lastBarrierY.set(edges[0].getSource().getY());
+                    }
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
+            }
+        }
     }
 }
