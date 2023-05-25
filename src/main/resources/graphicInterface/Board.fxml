@@ -45,7 +45,7 @@
                <Insets top="70.0" />
             </VBox.margin>
          </Button>
-         <Button fx:id="saveButton" mnemonicParsing="false" prefHeight="90.0" prefWidth="340.0" styleClass="buttonMenu" stylesheets="@../style/buttonMenu.css" text="Save">
+         <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveGame" prefHeight="90.0" prefWidth="340.0" styleClass="buttonMenu" stylesheets="@../style/buttonMenu.css" text="Save">
             <VBox.margin>
                <Insets top="70.0" />
             </VBox.margin></Button>
