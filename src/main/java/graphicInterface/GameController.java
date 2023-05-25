@@ -244,25 +244,14 @@ public class GameController {
                     double prevGBCenterY = previousGhostBarrier[0].getY() - panePadding + 0.1 * (boxSize + GRID_GAP) / 2;
 
                     if (abs(x - prevGBCenterX) >= (previousGhostBarrier[0].getWidth() + GRID_GAP) / 4 || abs(y - prevGBCenterY) >= previousGhostBarrier[0].getHeight() / 2 || (previousGhostBarrier[0].getX() - panePadding) / (boxSize + GRID_GAP) >= 7) {
-                        playersAndBarriersPane.getChildren().remove(previousGhostBarrier[0]);
-                        previousGhostBarrier[0] = null;
-                        lastBarrierX.set(-1);
-                        lastBarrierY.set(-1);
+                        removeGhostBarrier(previousGhostBarrier, lastTransition, lastBarrierX, lastBarrierY, playersAndBarriersPane);
                     }
                 } else {
                     double prevGBCenterX = previousGhostBarrier[0].getX() - panePadding + 0.1 * (boxSize + GRID_GAP) / 2;
                     double prevGBCenterY = previousGhostBarrier[0].getY() - panePadding + (boxSize + GRID_GAP) / 2;
 
                     if (abs(x - prevGBCenterX) >= previousGhostBarrier[0].getWidth() / 2 || abs(y - prevGBCenterY) >= (previousGhostBarrier[0].getHeight() + GRID_GAP) / 4 || (previousGhostBarrier[0].getY() - panePadding) / (boxSize + GRID_GAP) >= 7) {
-                        if (lastTransition[0] != null) {
-                            lastTransition[0].stop();
-                            lastTransition[0] = null;
-                        }
-
-                        playersAndBarriersPane.getChildren().remove(previousGhostBarrier[0]);
-                        previousGhostBarrier[0] = null;
-                        lastBarrierX.set(-1);
-                        lastBarrierY.set(-1);
+                        removeGhostBarrier(previousGhostBarrier, lastTransition, lastBarrierX, lastBarrierY, playersAndBarriersPane);
                     }
                 }
             }
@@ -289,6 +278,8 @@ public class GameController {
                                     playButton.getStyleClass().clear();
                                     playButton.getStyleClass().add("unavailableButtonMenu");
                                 }
+
+                                removeGhostBarrier(previousGhostBarrier, lastTransition, lastBarrierX, lastBarrierY, playersAndBarriersPane);
 
                                 // Remove barrier handlers before going to next turn
                                 mainStackPane.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
@@ -324,21 +315,12 @@ public class GameController {
             if (event.getButton() == MouseButton.SECONDARY && !isModeMovePlayer.get()) {
                 isBarrierHorizontal.set(!isBarrierHorizontal.get());
 
-                if (lastTransition[0] != null) {
-                    lastTransition[0].stop();
-                    lastTransition[0] = null;
-                }
-
-                playersAndBarriersPane.getChildren().remove(previousGhostBarrier[0]);
-                previousGhostBarrier[0] = null;
-                lastBarrierX.set(-1);
-                lastBarrierY.set(-1);
-
+                removeGhostBarrier(previousGhostBarrier, lastTransition, lastBarrierX, lastBarrierY, playersAndBarriersPane);
                 updateGhostBarrier(event.getX() - panePadding, event.getY() - panePadding, previousGhostBarrier, lastBarrierX, lastBarrierY, isModeMovePlayer, isBarrierHorizontal, playersAndBarriersPane, panePadding, boxSize);
             }
         };
 
-        mainStackPane.setOnMouseClicked(switchBarrierEventHandler);
+        mainStackPane.setOnMouseReleased(switchBarrierEventHandler);
 
         // Handle the switching and (de)activating the corresponding eventHandler
         playButton.setOnAction(e -> {
@@ -470,7 +452,7 @@ public class GameController {
      * @param x The x pixel coordinate.
      * @param y The y pixel coordinate.
      * @param panePadding The padding value for the pane.
-     * @param boxSize The size of each box int the grid.
+     * @param boxSize The size of each box in the grid.
      * @return An array containing the x and y player coordinates.
      */
     private int[] pxCoordsToPlayerCoords(double x, double y, double panePadding, double boxSize) {
@@ -597,6 +579,19 @@ public class GameController {
         return edges;
     }
 
+    /**
+     * Updates the displayed ghost barrier
+     * @param x                         x coordinate of the cursor on the mainStackPane
+     * @param y                         y coordinate of the cursor on the mainStackPane
+     * @param previousGhostBarrier      The array containing the previous ghost barrier
+     * @param lastBarrierX              The property monitoring the x coordinate of the last placed barrier
+     * @param lastBarrierY              The property monitoring the y coordinate of the last placed barrier
+     * @param isModeMovePlayer          Whether the current mode is moving player or placing a barrier
+     * @param isBarrierHorizontal       Whether the player is trying to place the barrier horizontally or vertically
+     * @param playersAndBarriersPane    The pane on which the players and barriers are
+     * @param panePadding               The padding value for the pane.
+     * @param boxSize                   The size of each box in the grid
+     */
     private void updateGhostBarrier(double x, double y, Rectangle[] previousGhostBarrier, IntegerProperty lastBarrierX, IntegerProperty lastBarrierY, BooleanProperty isModeMovePlayer, BooleanProperty isBarrierHorizontal, Pane playersAndBarriersPane, double panePadding, double boxSize) {
         if (x > 0 && x < mainStackPane.getHeight() - panePadding * 2 && y > 0 && y < mainStackPane.getHeight() - panePadding * 2) {
             if (!isModeMovePlayer.get()) {
@@ -614,6 +609,26 @@ public class GameController {
                 }
             }
         }
+    }
+
+    /**
+     * Clears the previous ghost barrier and all animation and display associated with it
+     * @param previousGhostBarrier      The array containing the previous ghost barrier
+     * @param lastTransition            The array containing the last transition of the ghost barrier, if any
+     * @param lastBarrierX              The property monitoring the x coordinate of the last placed barrier
+     * @param lastBarrierY              The property monitoring the y coordinate of the last placed barrier
+     * @param playersAndBarriersPane    The pane on which the players and barriers are
+     */
+    private void removeGhostBarrier(Rectangle[] previousGhostBarrier, Transition[] lastTransition, IntegerProperty lastBarrierX, IntegerProperty lastBarrierY, Pane playersAndBarriersPane) {
+        if (lastTransition[0] != null) {
+            lastTransition[0].stop();
+            lastTransition[0] = null;
+        }
+
+        playersAndBarriersPane.getChildren().remove(previousGhostBarrier[0]);
+        previousGhostBarrier[0] = null;
+        lastBarrierX.set(-1);
+        lastBarrierY.set(-1);
     }
 
     public void saveGame(ActionEvent eventHandler) {
