@@ -183,19 +183,17 @@ public class Game implements Serializable {
         }
         catch (BadPositionException | BadNumberPlayersException | BadSizeException e) {
             System.out.println(e);
-            //this.initGame(2,9);
+            //this.initGame(2,BOARD_SIZE);
             // TODO : peut etre créer un board "classique" si jamais il y a une erreur, par exemple erreur -> créer un board de taille 9 avec 2 joueurs
         }
     }
 
     /**
      * This method returns the index of the player whose turn it is to play.
-     * @param nbPlayers the number of players of the game.
-     * @return the player whose turn it is to play.
+     * @return the index of the player whose turn it is to play.
      */
-    public int getCurrentPlayerTurn(int nbPlayers) {
-        // TODO : on a pas besoin du nombre de joueurs en paramètre, on peut directement prendre la length de la liste de joueurs
-        return this.turnCount % nbPlayers;
+    public int getCurrentPlayerTurn() {
+        return this.turnCount % this.players.size();
     }
 
     @Override
