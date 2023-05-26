@@ -18,6 +18,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -214,6 +215,12 @@ public class GameController {
 
             if (isMoveValid) {
                 Circle ghostPlayer = createPlayer(currentPlayerId, new Position(x, y), true, panePadding, gridGap, boxSize);
+                ghostPlayer.setOnMouseEntered(e -> {
+                    ghostPlayer.setCursor(Cursor.HAND);
+                });
+                ghostPlayer.setOnMouseExited(e -> {
+                    ghostPlayer.setCursor(Cursor.DEFAULT);
+                });
 
                 playersAndBarriersPane.getChildren().add(ghostPlayer);
                 ghostPlayers.add(ghostPlayer);
@@ -250,7 +257,7 @@ public class GameController {
 
                                 // Remove the save button
                                 playButton.getStyleClass().clear();
-                                playButton.getStyleClass().add("unavailableButtonMenu");
+                                playButton.getStyleClass().add("unavailableButton");
                                 rightVBox.getChildren().remove(saveButton);
 
                                 // Update the top text
@@ -326,7 +333,7 @@ public class GameController {
                                 barrierCountLabel.setText(barrierCount + "/" + BARRIER_LIMIT);
                                 if (barrierCount == BARRIER_LIMIT) {
                                     playButton.getStyleClass().clear();
-                                    playButton.getStyleClass().add("unavailableButtonMenu");
+                                    playButton.getStyleClass().add("unavailableButton");
                                 }
 
                                 removeGhostBarrier(previousGhostBarrier, lastTransition, lastBarrierX, lastBarrierY, playersAndBarriersPane);
@@ -659,6 +666,12 @@ public class GameController {
                     Edge[] edges = pxCoordsToBarrierCoords(x + panePadding, y + panePadding, game.getBoard(), isBarrierHorizontal.get(), panePadding, gridGap, boxSize);
                     if (edges != null && (lastBarrierX.get() != edges[0].getSource().getX() || lastBarrierY.get() != edges[0].getSource().getY())) {
                         Rectangle ghostBarrier = createBarrier(edges[0], edges[1], true, game.getBoard(), panePadding, gridGap, boxSize);
+                        ghostBarrier.setOnMouseEntered(e -> {
+                            ghostBarrier.setCursor(Cursor.HAND);
+                        });
+                        ghostBarrier.setOnMouseExited(e -> {
+                            ghostBarrier.setCursor(Cursor.DEFAULT);
+                        });
                         playersAndBarriersPane.getChildren().add(ghostBarrier);
                         previousGhostBarrier[0] = ghostBarrier;
                         lastBarrierX.set(edges[0].getSource().getX());
