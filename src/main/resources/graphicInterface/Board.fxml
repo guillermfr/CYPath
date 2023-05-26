@@ -44,10 +44,7 @@
             <VBox.margin>
                <Insets bottom="15.0" />
             </VBox.margin></Button>
-         <Button fx:id="loadButton" mnemonicParsing="false" prefHeight="54.0" prefWidth="340.0" styleClass="buttonMenu" stylesheets="@../style/buttonMenu.css" text="Load">
-            <VBox.margin>
-               <Insets />
-            </VBox.margin></Button>
+         <fx:include prefWidth="340.0" source="LoadButton.fxml" />
          <padding>
             <Insets top="64.0" />
          </padding>
