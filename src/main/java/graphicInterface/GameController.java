@@ -1,10 +1,7 @@
 package graphicInterface;
 
 import enumeration.Direction;
-import exception.BadPositionException;
-import exception.BadSizeException;
-import exception.UnknownColorException;
-import exception.UnknownPlayerIdException;
+import exception.*;
 import gameObjects.Board;
 import gameObjects.Game;
 import gameObjects.Player;
@@ -42,8 +39,8 @@ import saveLoad.SerializationUtils;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static constant.BarrierProperties.BARRIER_LIMIT;
-import static constant.BarrierProperties.BARRIER_SIZE;
+import static constant.GameProperties.BARRIER_LIMIT;
+import static constant.GraphicInterfaceSizes.BARRIER_SIZE;
 import static constant.GraphicInterfaceSizes.GRID_GAP;
 import static constant.GraphicInterfaceSizes.SCREEN_HEIGHT;
 import static java.lang.Math.*;
@@ -183,7 +180,7 @@ public class GameController {
      * @param boxSize The size of each box in the grid.
      */
     private void gameTurn(Circle[] playerListFx, Pane playersAndBarriersPane, int nbPlayers, int size, double panePadding, double boxSize) throws Exception {
-        int currentPlayerId = game.getCurrentPlayerTurn(nbPlayers);
+        int currentPlayerId = game.getCurrentPlayerTurn();
         Player currentPlayer = game.getPlayers().get(currentPlayerId);
 
         // Update player turn on top
@@ -517,9 +514,9 @@ public class GameController {
      * @param panePadding The padding value for the pane.
      * @param boxSize The size of each box in the grid
      * @return The Rectangle object representing the barrier.
-     * @throws Exception If the positions do not form a valid horizontal or vertical barrier.
+     * @throws BadBarrierEdgesException If the positions do not form a valid horizontal or vertical barrier.
      */
-    private Rectangle createBarrier(Edge e1, Edge e2, boolean isGhost, Board board, double panePadding, double boxSize) throws Exception {
+    private Rectangle createBarrier(Edge e1, Edge e2, boolean isGhost, Board board, double panePadding, double boxSize) throws BadBarrierEdgesException {
         Position[] positions1 = new Position[2];
         e1.normalizeEdgePositions(positions1, board);
         Position[] positions2 = new Position[2];
@@ -548,7 +545,6 @@ public class GameController {
 
         // Horizontal barrier
         if (pos2.getX() - pos1.getX() == 1 && pos2.getY() - pos1.getY() == 0) {
-            if (pos1.getY() == graph.getSize() - 1) throw new Exception();  // TODO dedicated Exception
             barrierX = panePadding + pos1.getX() * (boxSize + GRID_GAP);
             barrierY = panePadding + pos1.getY() * GRID_GAP + (pos1.getY() + 1) * boxSize - GRID_GAP * ((BARRIER_SIZE - 1) / 2);
             barrierWidth = 2 * boxSize + GRID_GAP;
@@ -556,14 +552,12 @@ public class GameController {
         } else {
             // Vertical barrier
             if (pos2.getX() - pos1.getX() == 0 && pos2.getY() - pos1.getY() == 1) {
-                if (pos1.getX() == graph.getSize() - 1) throw new Exception(); // TODO dedicated Exception
                 barrierX = panePadding + pos1.getX() * GRID_GAP + (pos1.getX() + 1) * boxSize - GRID_GAP * ((BARRIER_SIZE - 1) / 2);
                 barrierY = panePadding + pos1.getY() * (boxSize + GRID_GAP);
                 barrierWidth = GRID_GAP * BARRIER_SIZE;
                 barrierHeight = 2 * boxSize + GRID_GAP;
             } else {
-                // If any other case, the barrier does not have correct Positions: throw an exception (TODO)
-                throw new Exception();
+                throw new BadBarrierEdgesException("The given edges are not adjacent and thus cannot create a barrier.");
             }
         }
 
