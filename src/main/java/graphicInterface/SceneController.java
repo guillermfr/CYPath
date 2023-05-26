@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import static constant.GameProperties.BOARD_SIZE;
 import static constant.GraphicInterfaceSizes.SCREEN_HEIGHT;
 import static constant.GraphicInterfaceSizes.SCREEN_WIDTH;
 
@@ -66,10 +67,10 @@ public class SceneController {
         GameController gameController;
         if(id.equals(ButtonId.TWO_PLAYERS)) {
             gameController = loader.getController();
-            gameController.init(2, 9);
+            gameController.init(2, BOARD_SIZE);
         } else if(id.equals(ButtonId.FOUR_PLAYERS)) {
             gameController = loader.getController();
-            gameController.init(4, 9);
+            gameController.init(4, BOARD_SIZE);
         }
 
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
