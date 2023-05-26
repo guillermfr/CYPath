@@ -25,7 +25,7 @@ public class SaveNameDialog extends Dialog<SaveFileName> {
 
     /**
      * Default constructor of the SaveNameDialog class.
-     * @param saveName
+     * @param saveName name of the save file
      */
     public SaveNameDialog(SaveFileName saveName) {
         super();
@@ -53,7 +53,7 @@ public class SaveNameDialog extends Dialog<SaveFileName> {
 
         Button okButton = (Button) getDialogPane().lookupButton(ButtonType.OK);
         okButton.setStyle("-fx-background-color: #70b9fd;");
-        okButton.addEventFilter(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
+        okButton.addEventFilter(ActionEvent.ACTION, new EventHandler<>() {
             @Override
             public void handle(ActionEvent event) {
                 if (!validateDialog()) {
@@ -82,14 +82,11 @@ public class SaveNameDialog extends Dialog<SaveFileName> {
      * Converts the result of the DialogPane to a SaveFileName object.
      */
     private void setResultConverter() {
-        javafx.util.Callback<ButtonType, SaveFileName> saveNameResultConverter = new Callback<ButtonType, SaveFileName>() {
-            @Override
-            public SaveFileName call(ButtonType buttonType) {
-                if(buttonType == ButtonType.OK) {
-                    return saveName;
-                } else {
-                    return null;
-                }
+        javafx.util.Callback<ButtonType, SaveFileName> saveNameResultConverter = buttonType -> {
+            if(buttonType == ButtonType.OK) {
+                return saveName;
+            } else {
+                return null;
             }
         };
         setResultConverter(saveNameResultConverter);

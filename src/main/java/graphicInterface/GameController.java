@@ -215,12 +215,8 @@ public class GameController {
 
             if (isMoveValid) {
                 Circle ghostPlayer = createPlayer(currentPlayerId, new Position(x, y), true, panePadding, gridGap, boxSize);
-                ghostPlayer.setOnMouseEntered(e -> {
-                    ghostPlayer.setCursor(Cursor.HAND);
-                });
-                ghostPlayer.setOnMouseExited(e -> {
-                    ghostPlayer.setCursor(Cursor.DEFAULT);
-                });
+                ghostPlayer.setOnMouseEntered(e -> ghostPlayer.setCursor(Cursor.HAND));
+                ghostPlayer.setOnMouseExited(e -> ghostPlayer.setCursor(Cursor.DEFAULT));
 
                 playersAndBarriersPane.getChildren().add(ghostPlayer);
                 ghostPlayers.add(ghostPlayer);
@@ -666,12 +662,8 @@ public class GameController {
                     Edge[] edges = pxCoordsToBarrierCoords(x + panePadding, y + panePadding, game.getBoard(), isBarrierHorizontal.get(), panePadding, gridGap, boxSize);
                     if (edges != null && (lastBarrierX.get() != edges[0].getSource().getX() || lastBarrierY.get() != edges[0].getSource().getY())) {
                         Rectangle ghostBarrier = createBarrier(edges[0], edges[1], true, game.getBoard(), panePadding, gridGap, boxSize);
-                        ghostBarrier.setOnMouseEntered(e -> {
-                            ghostBarrier.setCursor(Cursor.HAND);
-                        });
-                        ghostBarrier.setOnMouseExited(e -> {
-                            ghostBarrier.setCursor(Cursor.DEFAULT);
-                        });
+                        ghostBarrier.setOnMouseEntered(e -> ghostBarrier.setCursor(Cursor.HAND));
+                        ghostBarrier.setOnMouseExited(e -> ghostBarrier.setCursor(Cursor.DEFAULT));
                         playersAndBarriersPane.getChildren().add(ghostBarrier);
                         previousGhostBarrier[0] = ghostBarrier;
                         lastBarrierX.set(edges[0].getSource().getX());
