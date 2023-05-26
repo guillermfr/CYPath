@@ -34,8 +34,8 @@ public class Home extends Application {
             Scene scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
 
             stage.setTitle("CYPath");
+            stage.setResizable(false);
             stage.setScene(scene);
-            stage.setMaximized(true);
             stage.show();
         }
         catch (Exception e) {

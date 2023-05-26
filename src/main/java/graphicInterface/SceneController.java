@@ -13,6 +13,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import static constant.GraphicInterfaceSizes.SCREEN_HEIGHT;
+import static constant.GraphicInterfaceSizes.SCREEN_WIDTH;
+
 /**
  * This class manages the menu buttons.
  * It allows the user to navigate between scenes of the menu.
@@ -71,7 +74,7 @@ public class SceneController {
 
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
 
-        scene = new Scene(root);
+        scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
         stage.setScene(scene);
         stage.show();
     }
