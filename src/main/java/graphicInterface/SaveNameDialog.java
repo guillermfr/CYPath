@@ -29,11 +29,13 @@ public class SaveNameDialog extends Dialog<SaveFileName> {
     private void buildUI() {
         Pane pane = createPane();
         getDialogPane().setContent(pane);
-        // TODO : add CSS ?
 
         getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        getDialogPane().setStyle("-fx-background-color: #282741;");
+        ((Button) getDialogPane().lookupButton(ButtonType.CANCEL)).setText("Cancel");
 
         Button okButton = (Button) getDialogPane().lookupButton(ButtonType.OK);
+        okButton.setStyle("-fx-background-color: #70b9fd;");
         okButton.addEventFilter(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -70,6 +72,7 @@ public class SaveNameDialog extends Dialog<SaveFileName> {
         VBox content = new VBox(10);
 
         Label saveNameLabel = new Label("Save name:");
+        saveNameLabel.setStyle("-fx-text-fill: #C1E1FF;");
         this.saveNameField = new TextField();
 
         GridPane gridPane = new GridPane();
