@@ -3,6 +3,7 @@ package graphicInterface;
 import enumeration.Direction;
 import exception.BadPositionException;
 import exception.BadSizeException;
+import exception.UnknownColorException;
 import exception.UnknownPlayerIdException;
 import gameObjects.Board;
 import gameObjects.Game;
@@ -20,6 +21,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -30,6 +32,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import saveLoad.CreateSaveDir;
 import saveLoad.SaveFileName;
@@ -56,6 +60,8 @@ public class GameController {
     @FXML
     StackPane mainStackPane;
     @FXML
+    StackPane topStackPane;
+    @FXML
     Pane gamePane;
     @FXML
     BorderPane rootPane;
@@ -70,6 +76,8 @@ public class GameController {
     Label barrierCountLabel;
     @FXML
     Button playButton;
+    @FXML
+    Button saveButton;
 
     /**
      * Default constructor of the GameController class.
@@ -209,18 +217,47 @@ public class GameController {
         // Default handler: moving the player
         EventHandler<MouseEvent> mainStackPanePlayerEventHandler = event -> {
             try {
-                if (event.getButton() == MouseButton.PRIMARY) {
-                    Position newPos = new Position(pxCoordsToPlayerCoords(event.getX(), event.getY(), panePadding, boxSize));
-                    if (newPos.getX() >= size || newPos.getY() >= size) throw new BadPositionException();
-                    boolean isMoveValid = currentPlayer.move(newPos.getX(), newPos.getY(), game.getBoard(), game.getPlayers());
-                    if (isMoveValid) {
-                        double[] newCoords = playerCoordsToPxCoords(newPos, panePadding, boxSize);
-                        playerListFx[currentPlayerId].setCenterX(newCoords[0]);
-                        playerListFx[currentPlayerId].setCenterY(newCoords[1]);
+                if (game.checkVictory() == null) {
+                    if (event.getButton() == MouseButton.PRIMARY) {
+                        Position newPos = new Position(pxCoordsToPlayerCoords(event.getX(), event.getY(), panePadding, boxSize));
+                        if (newPos.getX() >= size || newPos.getY() >= size) throw new BadPositionException();
+                        boolean isMoveValid = currentPlayer.move(newPos.getX(), newPos.getY(), game.getBoard(), game.getPlayers());
+                        if (isMoveValid) {
+                            double[] newCoords = playerCoordsToPxCoords(newPos, panePadding, boxSize);
+                            playerListFx[currentPlayerId].setCenterX(newCoords[0]);
+                            playerListFx[currentPlayerId].setCenterY(newCoords[1]);
 
-                        if (game.checkVictory() == null) {
-                            goToNextTurn(playerListFx, ghostPlayers, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
-                        } else System.out.println("Victoire de " + currentPlayer.getName()); // TODO : Victory screen or sth like that
+                            if (game.checkVictory() != null || currentPlayerId != 0) { // TODO : remove testing
+                                goToNextTurn(playerListFx, ghostPlayers, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
+                            } else {
+                                // Remove ghost players
+                                for (Circle gp : ghostPlayers) {
+                                    playersAndBarriersPane.getChildren().remove(gp);
+                                }
+                                ghostPlayers.clear();
+
+                                // Remove the save button
+                                playButton.getStyleClass().clear();
+                                playButton.getStyleClass().add("unavailableButtonMenu");
+                                rightVBox.getChildren().remove(saveButton);
+
+                                // Update the top text
+                                String winText = currentPlayer.getName() + " won !";
+                                currentPlayerTurnLabel.setText(winText);
+
+                                // Calculate the new size of the text
+                                Text text = new Text(winText);
+                                Font font = Font.font("Reem Kufi Regular", 40.0);
+                                text.setFont(font);
+                                double textSize = text.getLayoutBounds().getWidth();
+
+                                // Display and align everything
+                                Circle winner = createPlayer(currentPlayerId, new Position(0, 0), false, panePadding, boxSize);
+                                topStackPane.getChildren().add(winner);
+                                StackPane.setMargin(winner, new Insets(0, textSize * 1.5, 0, 0));
+                                StackPane.setMargin(currentPlayerTurnLabel, new Insets(0, 0, 0, textSize / 2));
+                            }
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -324,26 +361,32 @@ public class GameController {
 
         // Handle the switching and (de)activating the corresponding eventHandler
         playButton.setOnAction(e -> {
-            if (isModeMovePlayer.get()) {
-                if (game.getBoard().getBarriers().size() < BARRIER_LIMIT) {
-                    isModeMovePlayer.set(false);
-                    playButton.setText("Move player");
+            try {
+                if (game.checkVictory() == null) {
+                    if (isModeMovePlayer.get()) {
+                        if (game.getBoard().getBarriers().size() < BARRIER_LIMIT) {
+                            isModeMovePlayer.set(false);
+                            playButton.setText("Move player");
 
-                    for (Circle ghostPlayer : ghostPlayers) {
-                        playersAndBarriersPane.getChildren().remove(ghostPlayer);
+                            for (Circle ghostPlayer : ghostPlayers) {
+                                playersAndBarriersPane.getChildren().remove(ghostPlayer);
+                            }
+
+                            mainStackPane.setOnMousePressed(mainStackPaneBarrierEventHandler);
+                        }
+                    } else {
+                        isModeMovePlayer.set(true);
+                        playButton.setText("Place a barrier");
+
+                        for (Circle ghostPlayer : ghostPlayers) {
+                            playersAndBarriersPane.getChildren().add(ghostPlayer);
+                        }
+
+                        mainStackPane.setOnMousePressed(mainStackPanePlayerEventHandler);
                     }
-
-                    mainStackPane.setOnMousePressed(mainStackPaneBarrierEventHandler);
                 }
-            } else {
-                isModeMovePlayer.set(true);
-                playButton.setText("Place a barrier");
-
-                for (Circle ghostPlayer : ghostPlayers) {
-                    playersAndBarriersPane.getChildren().add(ghostPlayer);
-                }
-
-                mainStackPane.setOnMousePressed(mainStackPanePlayerEventHandler);
+            } catch (UnknownColorException ex) {
+                throw new RuntimeException(ex);
             }
         });
     }
