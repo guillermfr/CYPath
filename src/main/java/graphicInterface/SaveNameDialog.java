@@ -3,12 +3,16 @@ package graphicInterface;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import saveLoad.SaveFileName;
+
+import java.util.Objects;
 
 /**
  *  This class manages the "Save game" window.
@@ -40,6 +44,8 @@ public class SaveNameDialog extends Dialog<SaveFileName> {
     private void buildUI() {
         Pane pane = createPane();
         getDialogPane().setContent(pane);
+        Stage stage = (Stage) getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(Objects.requireNonNull(Home.class.getResourceAsStream("/img/icon.jpg"))));
 
         getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         getDialogPane().setStyle("-fx-background-color: #282741;");
