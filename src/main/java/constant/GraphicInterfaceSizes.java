@@ -10,14 +10,16 @@ public class GraphicInterfaceSizes {
     private GraphicInterfaceSizes(){}
 
     /**
-     * Constant for the gap between each boxes
-     */
-    public final static int GRID_GAP = 5;
-
-    /**
-     * Constant for the size of a barrier. It is counted in GRID_GAPs meaning 2 would give a barrier as big as 2 GRID_GAPs
+     * Size of a barrier counted in gridGaps.
+     * It means 2 would give a barrier as big as 2 gridGaps
      */
     public final static double BARRIER_SIZE = 1.4;
+
+    /**
+     * Size of the hit box placed vertically (respectively horizontally) around a horizontal (respectively vertical) barrier.
+     * It is counted in (boxSize + gridGap)s meaning 0.5 would give the player half the size of a box and half the size of a grid gap on each side of the barrier to click.
+     */
+    public final static double BARRIER_HIT_BOX = 0.15;
 
     /**
      * Set width of the screen
