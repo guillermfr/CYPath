@@ -118,13 +118,13 @@ public class GameController {
         for (int row = 0; row < graph.getSize(); row++) {
             double supposedY = (row + 1) * boxSize + row * gridGap;
             long correctY = round(supposedY) - currentY;
-            currentY += correctY + (long) gridGap;
+            currentY += correctY + gridGap;
 
             long currentX = 0;
             for (int col = 0; col < graph.getSize(); col++) {
                 double supposedX = (col + 1) * boxSize + col * gridGap;
                 long correctX = round(supposedX) - currentX;
-                currentX += correctX + (long) gridGap;
+                currentX += correctX + gridGap;
 
                 Rectangle cell = new Rectangle(correctX, correctY);
                 cell.setFill(Color.web("83BBEE"));
@@ -694,9 +694,8 @@ public class GameController {
 
     /**
      * Saves the game.
-     * @param eventHandler
      */
-    public void saveGame(ActionEvent eventHandler) {
+    public void saveGame() {
         CreateSaveDir.createSaveDirWithTest();
         if(saveNameGeneral.isEmpty()) {
             Dialog<SaveFileName> saveNameDialog = new SaveNameDialog(new SaveFileName(""));
