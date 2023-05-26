@@ -227,7 +227,7 @@ public class GameController {
                             playerListFx[currentPlayerId].setCenterX(newCoords[0]);
                             playerListFx[currentPlayerId].setCenterY(newCoords[1]);
 
-                            if (game.checkVictory() != null || currentPlayerId != 0) { // TODO : remove testing
+                            if (game.checkVictory() == null) {
                                 goToNextTurn(playerListFx, ghostPlayers, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, boxSize);
                             } else {
                                 // Remove ghost players
