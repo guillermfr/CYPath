@@ -1,20 +1,21 @@
-.buttonMenu {
+.normalButton {
     -fx-background-color :  #C1E1FF;
     -fx-background-radius: 20;
     -fx-font-family: "Reem Kufi";
     -fx-text-fill: black;
     -fx-font-size: 42;
+    -fx-cursor: hand;
 }
 
-.buttonMenu:hover {
+.normalButton:hover {
     -fx-background-color : #80c4ff;
 }
 
-.buttonMenu:pressed {
+.normalButton:pressed {
     -fx-background-color: #299bff;
 }
 
-.unavailableButtonMenu {
+.unavailableButton {
     -fx-alignment: center;
     -fx-background-color :  #C1E1FF80;
     -fx-background-radius: 20;
@@ -23,6 +24,6 @@
     -fx-font-size: 42;
 }
 
-.back {
+.backButton {
     -fx-background-color :  transparent;
 }
