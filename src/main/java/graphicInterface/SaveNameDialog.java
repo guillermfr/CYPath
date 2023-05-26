@@ -10,12 +10,19 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import saveLoad.SaveFileName;
 
+/**
+ *  This class manages the "Save game" window.
+ */
 public class SaveNameDialog extends Dialog<SaveFileName> {
 
     private SaveFileName saveName;
 
     private TextField saveNameField;
 
+    /**
+     * Default constructor of the SaveNameDialog class.
+     * @param saveName
+     */
     public SaveNameDialog(SaveFileName saveName) {
         super();
         this.setTitle("Save game");
@@ -26,6 +33,10 @@ public class SaveNameDialog extends Dialog<SaveFileName> {
         setResultConverter();
     }
 
+    /**
+     * Constructs the UI of the DialogPane.
+     * Creates a pane and set it as the DialogPane's content, then adds the buttons and an event filter.
+     */
     private void buildUI() {
         Pane pane = createPane();
         getDialogPane().setContent(pane);
@@ -44,16 +55,26 @@ public class SaveNameDialog extends Dialog<SaveFileName> {
                 }
             }
 
+            /**
+             * Validates the input of the dialog.
+             * @return true if the saveNameField is not empty, false otherwise.
+             */
             private boolean validateDialog() {
                 return !saveNameField.getText().isEmpty();
             }
         });
     }
 
+    /**
+     * Binds the textProperty of the saveNameField to the saveNameProperty of the saveName object.
+     */
     private void setPropertyBinding() {
         saveNameField.textProperty().bindBidirectional(saveName.saveNameProperty());
     }
 
+    /**
+     * Converts the result of the DialogPane to a SaveFileName object.
+     */
     private void setResultConverter() {
         javafx.util.Callback<ButtonType, SaveFileName> saveNameResultConverter = new Callback<ButtonType, SaveFileName>() {
             @Override
@@ -68,6 +89,10 @@ public class SaveNameDialog extends Dialog<SaveFileName> {
         setResultConverter(saveNameResultConverter);
     }
 
+    /**
+     * Creates a pane containing the UI.
+     * @return the pane containing the UI.
+     */
     private Pane createPane() {
         VBox content = new VBox(10);
 

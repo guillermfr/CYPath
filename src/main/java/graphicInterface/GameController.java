@@ -668,6 +668,10 @@ public class GameController {
         lastBarrierY.set(-1);
     }
 
+    /**
+     * Saves the game.
+     * @param eventHandler
+     */
     public void saveGame(ActionEvent eventHandler) {
         CreateSaveDir.createSaveDirWithTest();
         if(saveNameGeneral.isEmpty()) {
