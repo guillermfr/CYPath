@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #282741;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphicInterface.SceneController">
+<BorderPane prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #282741;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphicInterface.SceneController">
    <top>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="CY Path" textAlignment="CENTER" textFill="#70b9fd" VBox.vgrow="ALWAYS">
+            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" textAlignment="CENTER" textFill="#70b9fd" VBox.vgrow="ALWAYS">
                <font>
                   <Font name="Reem Kufi Regular" size="96.0" />
                </font>
+               <graphic>
+                  <ImageView fitHeight="200.0" fitWidth="744.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/logo.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <VBox.margin>
+                  <Insets top="100.0" />
+               </VBox.margin>
             </Label>
          </children>
       </VBox>
@@ -24,17 +33,20 @@
          <BorderPane.margin>
             <Insets top="100.0" />
          </BorderPane.margin>
-         <Button fx:id="buttonNewGame" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchScene" styleClass="buttonMenu" stylesheets="@../style/buttonMenu.css" text="New Game">
+         <Button fx:id="buttonNewGame" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchScene" styleClass="normalButton" stylesheets="@../style/buttons.css" text="New Game">
+            <font>
+               <Font name="Reem Kufi Regular" size="42.0" />
+            </font>
+            <VBox.margin>
+               <Insets top="50.0" />
+            </VBox.margin>
+         </Button>
+         <Button fx:id="buttonContinue" layoutX="10.0" layoutY="194.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchScene" styleClass="normalButton" stylesheets="@../style/buttons.css" text="Continue">
             <font>
                <Font name="Reem Kufi Regular" size="42.0" />
             </font>
          </Button>
-         <Button fx:id="buttonContinue" layoutX="10.0" layoutY="194.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchScene" styleClass="buttonMenu" stylesheets="@../style/buttonMenu.css" text="Continue">
-            <font>
-               <Font name="Reem Kufi Regular" size="42.0" />
-            </font>
-         </Button>
-         <Button fx:id="buttonQuit" layoutX="10.0" layoutY="250.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exit" styleClass="buttonMenu" stylesheets="@../style/buttonMenu.css" text="Quit">
+         <Button fx:id="buttonQuit" layoutX="10.0" layoutY="250.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exit" styleClass="normalButton" stylesheets="@../style/buttons.css" text="Quit">
             <font>
                <Font name="Reem Kufi Regular" size="42.0" />
             </font>

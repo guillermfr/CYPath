@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import static constant.GraphicInterfaceSizes.SCREEN_HEIGHT;
@@ -36,6 +37,7 @@ public class Home extends Application {
             stage.setTitle("CYPath");
             stage.setResizable(false);
             stage.setScene(scene);
+            stage.getIcons().add(new Image(Home.class.getResourceAsStream("/img/icon.jpg")));
             stage.show();
         }
         catch (Exception e) {
