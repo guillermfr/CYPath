@@ -1,7 +1,7 @@
 package constant;
 
 /**
- * Constant class for the properties of the barriers
+ * Constant class for the properties of various game objects
  */
 public class GameProperties {
     /**
