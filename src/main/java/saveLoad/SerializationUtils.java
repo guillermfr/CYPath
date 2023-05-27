@@ -7,7 +7,12 @@ import java.io.*;
 /**
  * The SerializationUtils class provide utility methods for objects serialization and deserialization
  */
-public class SerializationUtils {
+public abstract class SerializationUtils {
+    /**
+     * The constructor is useless for this class
+     */
+    private SerializationUtils(){}
+
     /**
      * serializes a Game object and writes it to a file.
      * @param game The Game object to be serialized.

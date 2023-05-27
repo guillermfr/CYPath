@@ -6,6 +6,7 @@ package exception;
 public class BadBarrierEdgesException extends Exception {
     /**
      * Constructor method for BadBarrierEdgesException.
+     * @param str message to display if the exception is thrown
      */
     public BadBarrierEdgesException(String str) {
         super(str);
