@@ -18,4 +18,9 @@ public class GameProperties {
      * The maximum amount of barrier players can place
      */
     public final static int BARRIER_LIMIT = 20;
+
+    /**
+     * Path of the save files
+     */
+    public final static String SAVE_PATH = System.getProperty("user.dir") + "/Data/";
 }
