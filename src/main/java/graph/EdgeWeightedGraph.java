@@ -129,11 +129,11 @@ public class EdgeWeightedGraph implements Serializable {
                     if (pos.getY() == this.size - 1) reached[0] = true;
                 }
 
-                case RED -> {
+                case GREEN -> {
                     if (pos.getX() == 0) reached[0] = true;
                 }
 
-                case GREEN -> {
+                case RED -> {
                     if (pos.getX() == this.size - 1) reached[0] = true;
                 }
 
