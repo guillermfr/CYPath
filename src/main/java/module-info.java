@@ -13,4 +13,5 @@ module graphicInterface {
     exports exception;
     exports gameObjects;
     exports graph;
+    exports saveLoad;
 }

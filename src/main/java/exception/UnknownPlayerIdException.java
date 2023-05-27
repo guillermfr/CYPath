@@ -1,7 +1,7 @@
 package exception;
 
 /**
- * UnknownPlayerIdException is used when trying to use an id < 0 or >= 4
+ * UnknownPlayerIdException is used when trying to use an id less than 0 or greater than or equal to 4.
  */
 public class UnknownPlayerIdException extends Exception {
     /**

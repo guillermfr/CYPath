@@ -8,7 +8,9 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-
+/**
+ * This class manages the load button.
+ */
 public class LoadButtonController {
     /**
      * Stage of the application.

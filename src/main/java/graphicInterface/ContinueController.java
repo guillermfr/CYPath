@@ -99,6 +99,11 @@ public class ContinueController extends SceneController implements Initializable
                 Button resumeButton = new Button("Resume");
                 resumeButton.getStyleClass().add("buttonContinueMenu");
                 resumeButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    /**
+                     * Handles the mouse event triggered by selecting a "Continue" option from the list of saved games.
+                     * Resumes the game from the selected saved file and navigates to the game board screen.
+                     * @param mouseEvent The mouse event triggered by selecting a saved game.
+                     */
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         Game resumedGame = SerializationUtils.deserialisationGame(file.getName());
@@ -106,6 +111,7 @@ public class ContinueController extends SceneController implements Initializable
                         try {
                             root = loader.load();
                             GameController gameController = loader.getController();
+                            // Initialize the game controller with the resumed game and the file name
                             gameController.initResume(resumedGame, file.getName());
                         } catch (Exception e) {
                             System.out.println(e);
@@ -122,6 +128,10 @@ public class ContinueController extends SceneController implements Initializable
                 Button deleteSaveButton = new Button("Delete");
                 deleteSaveButton.getStyleClass().add("buttonContinueMenu");
                 deleteSaveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    /**
+                     * Handles the mouse event triggered by selecting a delete option for a saved game.
+                     * @param mouseEvent The mouse event triggered by the delete option.
+                     */
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         saveFiles.remove(file.getPath());

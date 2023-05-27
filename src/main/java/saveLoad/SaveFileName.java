@@ -8,9 +8,7 @@ import javafx.beans.property.StringProperty;
  */
 public class SaveFileName {
 
-    /**
-     * Name of the save file.
-     */
+
     StringProperty saveName;
 
     /**
@@ -23,8 +21,8 @@ public class SaveFileName {
     }
 
     /**
-     * Getter for the saveName attribute.
-     * @return the save name as a StringProperty variable.
+     * Returns the StringProperty for the save name.
+     * @return The StringProperty representing the save name.
      */
     public StringProperty saveNameProperty() {
         return saveName;

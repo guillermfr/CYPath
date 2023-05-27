@@ -77,6 +77,12 @@ public class GameController {
      */
     public GameController() {}
 
+    /**
+     * Initializes a new game with the specified number of players and board size.
+     * @param nbPlayers The number of players in the game.
+     * @param size      The size of the game board.
+     * @throws Exception If an error occurs during initialization.
+     */
     public void initNew(int nbPlayers, int size) throws Exception {
         this.game = new Game();
         Board board = new Board(size);
@@ -85,6 +91,12 @@ public class GameController {
         init(nbPlayers);
     }
 
+    /**
+     * Initializes a game from a resumed state with the given game object and save name.
+     * @param resumedGame The game object representing the resumed state.
+     * @param saveName    The name of the saved game.
+     * @throws Exception If an error occurs during initialization.
+     */
     public void initResume(Game resumedGame, String saveName) throws Exception {
         this.game = resumedGame;
         saveNameGeneral = saveName;
@@ -92,6 +104,11 @@ public class GameController {
         init();
     }
 
+    /**
+     * Initializes the game with the current state. The number of players is determined
+     * by the game object's player count.
+     * @throws Exception If an error occurs during initialization.
+     */
     public void init() throws Exception {
         init(game.getPlayers().size());
     }
@@ -195,6 +212,15 @@ public class GameController {
         }
     }
 
+    /**
+     * Initializes the barriers on the game board by creating and adding rectangles representing the barriers
+     * to the specified pane.
+     * @param playersAndBarriersPane The pane to which the barrier rectangles will be added.
+     * @param panePadding The padding of the pane.
+     * @param gridGap The gap between grid cells.
+     * @param boxSize The size of each grid cell.
+     * @throws BadBarrierEdgesException if the barrier edges are invalid.
+     */
     public void initBarriers(Pane playersAndBarriersPane, double panePadding, long gridGap, double boxSize) throws BadBarrierEdgesException {
         for(Barrier barrier : game.getBoard().getBarriers()) {
             Rectangle rectangle = createBarrier(barrier.getEdge1(), barrier.getEdge2(), false, panePadding, gridGap, boxSize);

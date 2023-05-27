@@ -9,6 +9,10 @@ import java.io.File;
  */
 public abstract class CreateSaveDir {
     /**
+     * Default constructor of the CreateSaveDir class.
+     */
+    public CreateSaveDir() {}
+    /**
      * Creates the save directory.
      * This method is called internally to create the save directory if it doesn't exist.
      */
