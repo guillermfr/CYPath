@@ -2,7 +2,6 @@ package gameObjects;
 
 import exception.BadSizeException;
 import graph.EdgeWeightedGraph;
-import graph.Position;
 
 import java.io.Serializable;
 import java.util.ArrayList;

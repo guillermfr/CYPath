@@ -130,6 +130,11 @@ public class Edge implements Serializable {
         this.getTarget().getNeighbourEdges(board).get(isBarrierHorizontal ? Direction.NORTH : Direction.WEST).setWeight(weight);
     }
 
+    /**
+     * Returns a string representation of the Edge object.
+     * @return A string representation of the Edge object, including the source and target vertices
+     *         and the weight of the edge.
+     */
     @Override
     public String toString() {
         return "Edge{" +

@@ -178,6 +178,11 @@ public class Position implements Serializable {
         return abs(this.x - otherPos.getX()) == x && abs(this.y - otherPos.getY()) == y;
     }
 
+    /**
+     * Compares this Position object to the specified object for equality.
+     * @param obj The object to compare for equality.
+     * @return {@code true} if the specified object is equal to this Position, {@code false} otherwise.
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Position pos) {
@@ -187,6 +192,10 @@ public class Position implements Serializable {
         return false;
     }
 
+    /**
+     * Returns a string representation of this Position object.
+     * @return A string representation of this Position object in the format "(x,y)".
+     */
     @Override
     public String toString() {
         return "(" + x + "," + y + ")";

@@ -187,7 +187,7 @@ public class EdgeWeightedGraph implements Serializable {
      */
     public Map<Player, Boolean> checkPath(List<Player> players) {
         // We create a map with players as keys and boolean as values
-        Map<Player, Boolean> checkPathPlayers = new HashMap<Player, Boolean>();
+        Map<Player, Boolean> checkPathPlayers = new HashMap<>();
 
         // For every player, we check if there is a path between his position and the side he needs to reach
         for (Player p : players) {
@@ -196,7 +196,10 @@ public class EdgeWeightedGraph implements Serializable {
 
         return checkPathPlayers;
     }
-
+    /**
+     * Returns a string representation of the adjacency list for the graph.
+     * @return A string representation of the adjacency list, displaying each vertex and its adjacent vertices.
+     */
     @Override
     public String toString() {
         StringBuilder display = new StringBuilder();

@@ -183,8 +183,6 @@ public class Game implements Serializable {
         }
         catch (BadPositionException | BadNumberPlayersException | BadSizeException e) {
             System.out.println(e);
-            //this.initGame(2,BOARD_SIZE);
-            // TODO : peut etre créer un board "classique" si jamais il y a une erreur, par exemple erreur -> créer un board de taille 9 avec 2 joueurs
         }
     }
 

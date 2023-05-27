@@ -37,8 +37,8 @@ public class SaveNameDialog extends Dialog<SaveFileName> {
     }
 
     /**
-     * Constructs the UI of the DialogPane.
-     * Creates a pane and set it as the DialogPane's content, then adds the buttons and an event filter.
+     * Builds the user interface for the dialog.
+     * Creates and sets the content pane, configures button types, styles, and event handlers.
      */
     private void buildUI() {
         Pane pane = createPane();
@@ -53,8 +53,14 @@ public class SaveNameDialog extends Dialog<SaveFileName> {
         Button okButton = (Button) getDialogPane().lookupButton(ButtonType.OK);
         okButton.setStyle("-fx-background-color: #70b9fd;");
         okButton.addEventFilter(ActionEvent.ACTION, new EventHandler<>() {
+            /**
+             * Handles the action event triggered by the OK button.
+             * Validates the dialog and consumes the event if validation fails.
+             * @param event The action event triggered by the OK button.
+             */
             @Override
             public void handle(ActionEvent event) {
+                // Validate the dialog and consume the event if validation fails
                 if (!validateDialog()) {
                     event.consume();
                 }

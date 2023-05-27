@@ -23,11 +23,6 @@ public final class ButtonId {
     public static final String CONTINUE = "buttonContinue";
 
     /**
-     * Constant for the top left arrow.
-     */
-    public static final String BACK = "back";
-
-    /**
      * Constant for the "Two Players" button in the "New Game" scene.
      */
     public static final String TWO_PLAYERS = "twoPlayers";

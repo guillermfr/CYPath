@@ -32,7 +32,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import saveLoad.CreateSaveDir;
 import saveLoad.SaveFileName;
 import saveLoad.SerializationUtils;
 
@@ -293,16 +292,20 @@ public class GameController {
 
             if (previousGhostBarrier[0] != null) {
                 if (isBarrierHorizontal.get()) {
+                    // Calculate the center coordinates of the previous ghost barrier when it's horizontal
                     double prevGBCenterX = previousGhostBarrier[0].getX() - panePadding + (boxSize + gridGap) / 2;
                     double prevGBCenterY = previousGhostBarrier[0].getY() - panePadding + BARRIER_HIT_BOX * (boxSize + gridGap) / 2;
 
+                    // Check if the mouse has moved significantly away from the previous ghost barrier
                     if (abs(x - prevGBCenterX) >= (previousGhostBarrier[0].getWidth() + gridGap) / 4 || abs(y - prevGBCenterY) >= previousGhostBarrier[0].getHeight() / 2 || (previousGhostBarrier[0].getX() - panePadding) / (boxSize + gridGap) >= 7) {
                         removeGhostBarrier(previousGhostBarrier, lastTransition, lastBarrierX, lastBarrierY, playersAndBarriersPane);
                     }
                 } else {
+                    // Calculate the center coordinates of the previous ghost barrier when it's vertical
                     double prevGBCenterX = previousGhostBarrier[0].getX() - panePadding + BARRIER_HIT_BOX * (boxSize + gridGap) / 2;
                     double prevGBCenterY = previousGhostBarrier[0].getY() - panePadding + (boxSize + gridGap) / 2;
 
+                    // Check if the mouse has moved significantly away from the previous ghost barrier
                     if (abs(x - prevGBCenterX) >= previousGhostBarrier[0].getWidth() / 2 || abs(y - prevGBCenterY) >= (previousGhostBarrier[0].getHeight() + gridGap) / 4 || (previousGhostBarrier[0].getY() - panePadding) / (boxSize + gridGap) >= 7) {
                         removeGhostBarrier(previousGhostBarrier, lastTransition, lastBarrierX, lastBarrierY, playersAndBarriersPane);
                     }
@@ -312,32 +315,46 @@ public class GameController {
             updateGhostBarrier(x, y, previousGhostBarrier, lastBarrierX, lastBarrierY, isModeMovePlayer, isBarrierHorizontal, playersAndBarriersPane, panePadding, gridGap, boxSize);
         });
 
-        // Barrier placing handler
         EventHandler<MouseEvent> mainStackPaneBarrierEventHandler = new EventHandler<>() {
+            /**
+             * Handles the mouse event for placing a barrier on the mainStackPane.
+             * @param event The mouse event triggered on the mainStackPane.
+             */
             @Override
             public void handle(MouseEvent event) {
                 if (event.getButton() == MouseButton.PRIMARY) {
                     try {
-                        Edge[] edges = pxCoordsToBarrierCoords(event.getX(), event.getY(), game.getBoard(), isBarrierHorizontal.get(), panePadding, gridGap, boxSize) ;
+                        // Convert mouse coordinates to barrier coordinates
+                        Edge[] edges = pxCoordsToBarrierCoords(event.getX(), event.getY(), game.getBoard(), isBarrierHorizontal.get(), panePadding, gridGap, boxSize);
                         if (edges != null) {
+                            // Check if the obtained edges are valid for placing a barrier
                             boolean isBarrierValid = currentPlayer.placeBarrier(edges[0], edges[1], game.getBoard(), game.getPlayers(), game.getBoard().getBarriers());
                             if (isBarrierValid) {
+                                // Create a rectangle representing the barrier and add it to the playersAndBarriersPane
                                 Rectangle rectangle = createBarrier(edges[0], edges[1], false, game.getBoard(), panePadding, gridGap, boxSize);
                                 playersAndBarriersPane.getChildren().add(rectangle);
 
+                                // Update the barrier count label
                                 int barrierCount = game.getBoard().getBarriers().size();
                                 barrierCountLabel.setText(barrierCount + "/" + BARRIER_LIMIT);
+
+                                // Check if the barrier count has reached the limit
                                 if (barrierCount == BARRIER_LIMIT) {
+                                    // Disable the playButton if the barrier limit is reached
                                     playButton.getStyleClass().clear();
                                     playButton.getStyleClass().add("unavailableButton");
                                 }
 
+                                // Remove the ghost barrier and transition
                                 removeGhostBarrier(previousGhostBarrier, lastTransition, lastBarrierX, lastBarrierY, playersAndBarriersPane);
 
-                                // Remove barrier handlers before going to next turn
+                                // Remove the barrier handler before going to the next turn
                                 mainStackPane.removeEventHandler(MouseEvent.MOUSE_PRESSED, this);
+
+                                // Go to the next turn
                                 goToNextTurn(playerListFx, ghostPlayers, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, nbPlayers, size, panePadding, gridGap, boxSize);
                             } else {
+                                // Create an animation for the failed barrier placement
                                 Animation animation = new Transition() {
                                     {
                                         setCycleDuration(Duration.millis(500));
@@ -345,13 +362,19 @@ public class GameController {
                                         lastTransition[0] = this;
                                     }
 
+                                    /**
+                                     * Interpolates the color of the previous ghost barrier to indicate the failure.
+                                     * @param v The current value of the interpolation (between 0.0 and 1.0).
+                                     */
                                     @Override
                                     protected void interpolate(double v) {
-                                        if (previousGhostBarrier[0] != null) previousGhostBarrier[0].setFill(new Color(1 - v, 0, 0, 0.5));
+                                        // Interpolate the color of the previous ghost barrier to indicate the failure
+                                        if (previousGhostBarrier[0] != null)
+                                            previousGhostBarrier[0].setFill(new Color(1 - v, 0, 0, 0.5));
                                     }
                                 };
 
-
+                                // Set the fill color of the previous ghost barrier to indicate the failure
                                 previousGhostBarrier[0].setFill(new Color(1, 0, 0, 0.5));
                                 animation.play();
                             }
@@ -365,9 +388,12 @@ public class GameController {
 
         // Handle the switching between horizontal and vertical barrier
         EventHandler<MouseEvent> switchBarrierEventHandler = event -> {
+            // Check if the right mouse button is pressed and the mode is not move player
             if (event.getButton() == MouseButton.SECONDARY && !isModeMovePlayer.get()) {
+                // Toggle the horizontal/vertical barrier mode
                 isBarrierHorizontal.set(!isBarrierHorizontal.get());
 
+                // Remove the previous ghost barrier and update the new ghost barrier
                 removeGhostBarrier(previousGhostBarrier, lastTransition, lastBarrierX, lastBarrierY, playersAndBarriersPane);
                 updateGhostBarrier(event.getX() - panePadding, event.getY() - panePadding, previousGhostBarrier, lastBarrierX, lastBarrierY, isModeMovePlayer, isBarrierHorizontal, playersAndBarriersPane, panePadding, gridGap, boxSize);
             }
@@ -378,26 +404,33 @@ public class GameController {
         // Handle the switching and (de)activating the corresponding eventHandler
         playButton.setOnAction(e -> {
             try {
+                // Check if the game is not yet won
                 if (game.checkVictory() == null) {
                     if (isModeMovePlayer.get()) {
+                        // Switch to barrier placement mode if the barrier limit is not reached
                         if (game.getBoard().getBarriers().size() < BARRIER_LIMIT) {
                             isModeMovePlayer.set(false);
                             playButton.setText("Move player");
 
+                            // Remove ghost players from the display
                             for (Circle ghostPlayer : ghostPlayers) {
                                 playersAndBarriersPane.getChildren().remove(ghostPlayer);
                             }
 
+                            // Set the mouse event handler for placing barriers
                             mainStackPane.setOnMousePressed(mainStackPaneBarrierEventHandler);
                         }
                     } else {
+                        // Switch to player movement mode
                         isModeMovePlayer.set(true);
                         playButton.setText("Place a barrier");
 
+                        // Add ghost players to the display
                         for (Circle ghostPlayer : ghostPlayers) {
                             playersAndBarriersPane.getChildren().add(ghostPlayer);
                         }
 
+                        // Set the mouse event handler for moving players
                         mainStackPane.setOnMousePressed(mainStackPanePlayerEventHandler);
                     }
                 }
@@ -541,23 +574,26 @@ public class GameController {
      * @throws BadBarrierEdgesException If the positions do not form a valid horizontal or vertical barrier.
      */
     private Rectangle createBarrier(Edge e1, Edge e2, boolean isGhost, Board board, double panePadding, long gridGap, double boxSize) throws BadBarrierEdgesException {
+        // Normalize the edges and obtain the corresponding positions
         Position[] positions1 = new Position[2];
         e1.normalizeEdgePositions(positions1, board);
         Position[] positions2 = new Position[2];
         e2.normalizeEdgePositions(positions2, board);
 
+        // Sort the positions to ensure consistent barrier representation
         Position pos1 = positions1[0];
         Position pos2 = positions2[0];
-
         if (pos1.toAdjacencyListIndex(graph.getSize()) > pos2.toAdjacencyListIndex(graph.getSize())) {
             Position tempPos = pos1;
             pos1 = pos2;
             pos2 = tempPos;
         }
 
+        // Create a new rectangle to represent the barrier
         Rectangle barrier = new Rectangle();
         barrier.setFill(Color.web("#101548", isGhost ? 0.5 : 1));
 
+        // Apply drop shadow effect to the barrier
         DropShadow ds = new DropShadow();
         ds.setRadius(4.0);
         ds.setOffsetX(2.0);
@@ -567,8 +603,9 @@ public class GameController {
 
         double barrierX, barrierY, barrierWidth, barrierHeight;
 
-        // Horizontal barrier
+        // Determine the position and dimensions of the barrier based on the edge positions
         if (pos2.getX() - pos1.getX() == 1 && pos2.getY() - pos1.getY() == 0) {
+            // Horizontal barrier
             barrierX = panePadding + pos1.getX() * (boxSize + gridGap);
             barrierY = panePadding + pos1.getY() * gridGap + (pos1.getY() + 1) * boxSize - gridGap * ((BARRIER_SIZE - 1) / 2);
             barrierWidth = 2 * boxSize + gridGap;
@@ -581,10 +618,12 @@ public class GameController {
                 barrierWidth = gridGap * BARRIER_SIZE;
                 barrierHeight = 2 * boxSize + gridGap;
             } else {
+                // Invalid barrier edge
                 throw new BadBarrierEdgesException("The given edges are not adjacent and thus cannot create a barrier.");
             }
         }
 
+        // Set the position and dimensions of the barrier
         barrier.setX(barrierX);
         barrier.setY(barrierY);
         barrier.setWidth(barrierWidth);
@@ -609,32 +648,36 @@ public class GameController {
         Edge[] edges = new Edge[2];
 
         if (isBarrierHorizontal) {
+            // Convert pixel coordinates to barrier coordinates for a horizontal barrier
             double newX = floor((x - panePadding) / (boxSize + gridGap));
             double newY = (y - panePadding + (double) gridGap / 2) / (boxSize + gridGap);
 
-            // If the click was within a little margin in Y, we still accept it and return the closest value
+            // Check if the click was within a little margin in Y, return the closest value if so
             if (round(newY) > 0 && round(newY) < board.getSize() && abs(round(newY) - newY) <= BARRIER_HIT_BOX) {
                 newY = round(newY) - 1;
 
+                // Obtain the edge positions for the barrier
                 Position pos = new Position((int) newX, (int) newY);
                 edges[0] = pos.getNeighbourEdges(board).get(Direction.SOUTH);
                 edges[1] = pos.getNeighbourPositions(board).get(newX == board.getSize() - 1 ? Direction.WEST : Direction.EAST).getNeighbourEdges(board).get(Direction.SOUTH); // If at the border, the barrier is from right to left instead
             } else {
-                return null;
+                return null; // Invalid coordinates for barrier placement
             }
         } else {
+            // Convert pixel coordinates to barrier coordinates for a vertical barrier
             double newX = (x - panePadding + (double) gridGap / 2) / (boxSize + gridGap);
             double newY = floor((y - panePadding) / (boxSize + gridGap));
 
-            // If the click was within a little margin in X, we still accept it and return the closest value
+            // Check if the click was within a little margin in X, return the closest value if so
             if (round(newX) > 0 && round(newX) < board.getSize() && abs(round(newX) - newX) <= BARRIER_HIT_BOX) {
                 newX = round(newX) - 1;
 
+                // Obtain the edge positions for the barrier
                 Position pos = new Position((int) newX, (int) newY);
                 edges[0] = pos.getNeighbourEdges(board).get(Direction.EAST);
                 edges[1] = pos.getNeighbourPositions(board).get(newY == board.getSize() - 1 ? Direction.NORTH : Direction.SOUTH).getNeighbourEdges(board).get(Direction.EAST); // If at the border, the barrier is from bottom to top instead
             } else {
-                return null;
+                return null; // Invalid coordinates for placement
             }
         }
 
@@ -697,17 +740,23 @@ public class GameController {
     }
 
     /**
-     * Saves the game.
+     * Saves the current game state.
+     * If a save name is not already provided, prompts the user to enter a save name using a dialog.
+     * Serializes the game object using the provided save name and updates the saveNameGeneral field.
      */
     public void saveGame() {
         if(saveNameGeneral.isEmpty()) {
+            // Prompt the user to enter a save name using a dialog
             Dialog<SaveFileName> saveNameDialog = new SaveNameDialog(new SaveFileName(""));
             Optional<SaveFileName> saveName = saveNameDialog.showAndWait();
+
             if(saveName.isPresent()) {
+                // Serialize the game object using the entered save name
                 SerializationUtils.serialisationGame(this.game, saveName.get().getSaveName());
-                saveNameGeneral = saveName.get().getSaveName();
+                saveNameGeneral = saveName.get().getSaveName(); // Update the saveNameGeneral field with the entered save name
             }
         } else {
+            // Serialize the game object using the existing save name
             SerializationUtils.serialisationGame(this.game, saveNameGeneral);
         }
     }
