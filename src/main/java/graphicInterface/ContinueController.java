@@ -1,11 +1,15 @@
 package graphicInterface;
 
 import constant.GameProperties;
+import gameObjects.Game;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -13,11 +17,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 import saveLoad.CreateSaveDir;
+import saveLoad.SerializationUtils;
 
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+
+import static constant.GraphicInterfaceSizes.SCREEN_HEIGHT;
+import static constant.GraphicInterfaceSizes.SCREEN_WIDTH;
 
 /**
  * This class manages the Continue scene.
@@ -25,6 +34,18 @@ import java.util.*;
  */
 public class ContinueController extends SceneController implements Initializable {
 
+    /**
+     * Stage of the application.
+     */
+    private Stage stage;
+    /**
+     * Current scene.
+     */
+    private Scene scene;
+    /**
+     * Parent root.
+     */
+    private Parent root;
     /**
      * List of the existing saves.
      */
@@ -80,7 +101,21 @@ public class ContinueController extends SceneController implements Initializable
                 resumeButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        System.out.println(file.getPath());
+                        Game resumedGame = SerializationUtils.deserialisationGame(file.getName());
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("Board.fxml"));
+                        try {
+                            root = loader.load();
+                            GameController gameController = loader.getController();
+                            gameController.initResume(resumedGame, file.getName());
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+
+                        stage = (Stage) listContinue.getScene().getWindow();
+
+                        scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
+                        stage.setScene(scene);
+                        stage.show();
                     }
                 });
 
