@@ -1,7 +1,6 @@
 package graphicInterface;
 
 import constant.ButtonId;
-import exception.BadSizeException;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -10,8 +9,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 import static constant.GameProperties.BOARD_SIZE;
 import static constant.GraphicInterfaceSizes.SCREEN_HEIGHT;
