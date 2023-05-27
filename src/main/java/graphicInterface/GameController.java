@@ -700,7 +700,6 @@ public class GameController {
      * Saves the game.
      */
     public void saveGame() {
-        CreateSaveDir.createSaveDirWithTest();
         if(saveNameGeneral.isEmpty()) {
             Dialog<SaveFileName> saveNameDialog = new SaveNameDialog(new SaveFileName(""));
             Optional<SaveFileName> saveName = saveNameDialog.showAndWait();

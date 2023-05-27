@@ -1,5 +1,6 @@
 package graphicInterface;
 
+import constant.GameProperties;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -53,19 +54,10 @@ public class ContinueController extends SceneController implements Initializable
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         // We get the path of the save directory
-        URL saveURL = getClass().getResource("/save");
-
-        File saveDir = null;
-        try {
-            if(saveURL != null) {
-                saveDir = new File(saveURL.toURI());
-            }
-        } catch (URISyntaxException e) {
-            System.out.println(e);
-        }
+        File saveDir = new File(GameProperties.SAVE_PATH);
 
         // If the folder exists and isn't empty
-        if(saveDir != null && Objects.requireNonNull(saveDir.listFiles()).length != 0) {
+        if(saveDir.exists() && Objects.requireNonNull(saveDir.listFiles()).length != 0) {
             saveFiles = new ArrayList<>();
 
             List<HBox> list = new ArrayList<>();
@@ -86,10 +78,15 @@ public class ContinueController extends SceneController implements Initializable
 
                 Button resumeButton = new Button("Resume");
                 resumeButton.getStyleClass().add("buttonContinueMenu");
+                resumeButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        System.out.println(file.getPath());
+                    }
+                });
 
                 Button deleteSaveButton = new Button("Delete");
                 deleteSaveButton.getStyleClass().add("buttonContinueMenu");
-                deleteSaveButton.setId(file.getPath());
                 deleteSaveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
@@ -107,8 +104,7 @@ public class ContinueController extends SceneController implements Initializable
             // We add the list of buttons to the ListView
             listContinue.setItems(FXCollections.observableList(list));
         } else {
-            //saveDir = new File("target/classes/save");
-            //saveDir.mkdir();
+            // If there is no save folder, we create it
             CreateSaveDir.createSaveDir();
 
             // If there is no save file

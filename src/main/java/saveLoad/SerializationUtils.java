@@ -1,5 +1,6 @@
 package saveLoad;
 
+import constant.GameProperties;
 import gameObjects.Game;
 import java.io.*;
 
@@ -16,8 +17,9 @@ public class SerializationUtils {
         // open output stream of data which write in file filename
         // ObjectOutputStream responsible for serialization of objects
         // and writing of serialized data in output stream of fileOutputStream
-        try (FileOutputStream fileOut = new FileOutputStream("target/classes/save/" + filename);
-            ObjectOutputStream out = new ObjectOutputStream(fileOut)){
+        CreateSaveDir.createSaveDir();
+        try (FileOutputStream fileOut = new FileOutputStream(GameProperties.SAVE_PATH + filename);
+             ObjectOutputStream out = new ObjectOutputStream(fileOut)){
             // take Game and convert it in serialized representation
             // write this representation in the file output stream
             out.writeObject(game);
@@ -39,7 +41,7 @@ public class SerializationUtils {
         // open input stream which will read filename
         // ObjectInputStream responsible for deserialization of the object
         // using data input stream from FileInputStream
-        try (FileInputStream fileIn = new FileInputStream("target/classes/save/" + filename);
+        try (FileInputStream fileIn = new FileInputStream(GameProperties.SAVE_PATH + filename);
         ObjectInputStream in = new ObjectInputStream(fileIn)){
             //deserialization of input data, convert it in Game object
             game = (Game) in.readObject();
