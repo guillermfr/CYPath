@@ -22,8 +22,9 @@ This project is developed in Java.
 
 ## Installation
 ### Recommended environment setup
-* [JDK](https://www.oracle.com/fr/java/technologies/downloads/) 20 or newer
-* [JavaFX](https://gluonhq.com/products/javafx/) 20 or newer
+- [JDK](https://www.oracle.com/fr/java/technologies/downloads/) 20 or newer
+  * Make sure `JAVA_HOME` is [properly set](https://www.baeldung.com/java-home-on-windows-7-8-10-mac-os-x-linux).
+- [JavaFX](https://gluonhq.com/products/javafx/) 20 or newer
 
 Before anything else, start by cloning the repository
 ```bash
