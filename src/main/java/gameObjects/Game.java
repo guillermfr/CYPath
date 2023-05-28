@@ -182,7 +182,7 @@ public class Game implements Serializable {
             this.turnCount = 0;
         }
         catch (BadPositionException | BadNumberPlayersException | BadSizeException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 

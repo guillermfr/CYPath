@@ -43,7 +43,7 @@ public class Home extends Application {
             stage.show();
         }
         catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 

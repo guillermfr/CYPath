@@ -102,7 +102,7 @@ public class EdgeWeightedGraph implements Serializable {
                     }
                 }
                 catch (BadPositionException | BadWeightException exception) {
-                    System.out.println(exception);
+                    exception.printStackTrace();
                 }
             }
         }
@@ -172,7 +172,7 @@ public class EdgeWeightedGraph implements Serializable {
             this.DFSUtil(pos, visited, color, reached);
         }
         catch (UnknownColorException uce) {
-            System.out.println(uce);
+            uce.printStackTrace();
         }
 
         return reached[0];
