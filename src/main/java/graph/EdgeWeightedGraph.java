@@ -26,7 +26,7 @@ public class EdgeWeightedGraph implements Serializable {
     /**
      * Adjacency list of the graph.
      */
-    private LinkedList<Edge>[] adjacencyList;
+    private final LinkedList<Edge>[] adjacencyList;
 
     /**
      * Constructor method for the EdgeWeightedGraph class.
@@ -34,6 +34,7 @@ public class EdgeWeightedGraph implements Serializable {
      * @param size number of rows/columns.
      * @throws BadSizeException if the size isn't strictly greater than 0, it throws an error.
      */
+    @SuppressWarnings("unchecked")
     public EdgeWeightedGraph(int size) throws BadSizeException {
 
         if(size < 0) {
@@ -41,7 +42,7 @@ public class EdgeWeightedGraph implements Serializable {
         }
 
         this.size = size;
-        this.adjacencyList = new LinkedList[size*size];
+        this.adjacencyList = (LinkedList<Edge>[]) new LinkedList[size*size];
 
         for (int i = 0; i<size*size; i++) {
             this.adjacencyList[i] = new LinkedList<>();
@@ -137,9 +138,7 @@ public class EdgeWeightedGraph implements Serializable {
                     if (pos.getX() == this.size - 1) reached[0] = true;
                 }
 
-                default -> {
-                    throw new UnknownColorException("Unknown color");
-                }
+                default -> throw new UnknownColorException("Unknown color");
             }
 
             // We mark that the current node has been visited
@@ -208,35 +207,4 @@ public class EdgeWeightedGraph implements Serializable {
         }
         return display.toString();
     }
-
-    /**
-     * Method displaying the graph.
-     * The display is really simple and is just useful for tests.
-     */
-    public void displayGraph() {
-        for (int i = 0; i < this.size; i++) {
-            for (int j = 0; j < this.size; j++) {
-                if(i == 0) {
-                    System.out.print(" ");
-                }
-                try {
-                    System.out.print((new Position(i,j)).toAdjacencyListIndex(this.size));
-                }
-                catch (BadPositionException bpe) {
-                    System.out.println(bpe);
-                }
-                if(j != this.size - 1) {
-                    System.out.print("-");
-                }
-            }
-            System.out.println();
-            if(i != this.size-1) {
-                for (int k = 0; k < this.size; k++) {
-                    System.out.print(" | ");
-                }
-            }
-            System.out.println();
-        }
-    }
-
 }
