@@ -2,6 +2,19 @@
 		<img style="margin-top: 10%" src="src/main/resources/img/logo.png" width="546" alt="Logo CYPath" />
 </div>
 
+## Table of Contents
+- [About](#about)
+- [Installation](#installation)
+    * [Recommended environment setup](#recommended-environment-setup)
+    * [Run without generating a JAR file](#run-without-generating-a-jar-file)
+    * [Setup to run through a JAR file](#setup-to-run-through-a-jar-file)
+    * [Generate JavaDoc](#generate-javadoc)
+- [How to play](#how-to-play)
+    * [Rules](#rules)
+    * [Controls](#controls)
+- [Documentation](#documentation)
+- [Authors](#authors)
+
 ## About
 This project is a reproduction of the game Quoridor.
 This game is a 2 or 4 players game where you need to reach the other side of the board with your pawn. <br />
@@ -13,56 +26,65 @@ This project is developed in Java.
 * [JDK](https://www.oracle.com/fr/java/technologies/downloads/) 20 or newer
 * [JavaFX](https://gluonhq.com/products/javafx/) 20 or newer
 
-### Run without generating a JAR file
-If you don't need to generate a JAR file and just want to execute the application, you can do the following:
-1. Clone the repository or download it
+Before anything else, start by cloning the repository
 ```bash
 git clone https://github.com/guillermfr/CYPath
 cd CYPath
 ```
 
-2. Run the application using the Maven Wrapper
+### Run without generating a JAR file
+If you don't need to generate a JAR file and just want to execute the application, you can do the following:
 
-   2.1. Under Windows
+1. Run the application using the Maven Wrapper
+
+   1.1. Under Windows
     ```bash
     ./mvnw.cmd javafx:run
     ```
 
-   2.2. Under Linux (or any other Unix-based OS)
+   1.2. Under Linux (or any other Unix-based OS)
     ```bash
     ./mvnw javafx:run
     ```
 
 ### Setup to run through a JAR file
 If you do need to generate a JAR file to export it afterward, you can do the following:
-1. Clone the repository or download it
-```bash
-git clone https://github.com/guillermfr/CYPath
-cd CYPath
-```
 
-2. Generate the JAR archive from the source code using the Maven Wrapper
+1. Generate the JAR archive from the source code using the Maven Wrapper
 
-    2.1. Under Windows
+    1.1. Under Windows
     ```bash
     ./mvnw.cmd package
     ```
 
-   2.2. Under Linux (or any other Unix-based OS)
+   1.2. Under Linux (or any other Unix-based OS)
     ```bash
     ./mvnw package
     ```
 
-3. Move to the generated folder
+2. Move to the generated folder
 ```bash
 cd target
 ```
 
-4. Now, you can launch the application using the JAR file
+3. Now, you can launch the application using the JAR file
 ```bash
 java --module-path "path/to/javafx-sdk-x.y.z/lib" --add-modules javafx.controls,javafx.fxml -jar ./CYPath-x.y.jar
 ```
 Where `path/to/javafx-sdk-x.y.z/lib` is the path to your javafx lib directory (e.g. `C:/javafx-sdk-20.0.1/lib`) and `./CYPath-x.y.jar` is the name of the generated file with the correct version (e.g. `./CYPath-1.0.jar`).
+
+### Generate JavaDoc
+1. Generate it using the Maven Wrapper
+
+   1.1. Under Windows
+    ```bash
+    ./mvnw.cmd javadoc:javadoc
+    ```
+
+   1.2. Under Linux (or any other Unix-based OS)
+    ```bash
+    ./mvnw javadoc:javadoc
+    ```
 
 ## How to play
 
@@ -92,6 +114,9 @@ They can't place it if it overlaps another barrier or completely blocks a player
 * To place a barrier, click `Place a barrier` and then click between two cells to place it. <br />
   By default, it will be placed horizontally, and it can be switched vertically by right-clicking. <br />
   If you changed your mind and want to move your player, you can click on `Move player`
+
+## Documentation
+JavaDoc is generated automatically and available in `Doc/apidocs`. To view the documentation, open index.html in your browser.
 
 ## Authors
 
