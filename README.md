@@ -1,6 +1,5 @@
-<div align="center">
-		<img src="https://i.imgur.com/YnWDRCO.png" alt="Logo CYPath" />
-</div>
+[<img src="https://i.imgur.com/YnWDRCO.png" alt="Logo CYPath" />](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+
 
 ## Table of Contents
 - [About](#about)
