@@ -1,99 +1,97 @@
-# Java Project: CY Path
+<div style="text-align: center">
+		<img style="margin-top: 10%" src="src/main/resources/img/logo.png" width="546" alt="Logo CYPath" />
+</div>
 
-## Presentation
-
+## About
 This project is a reproduction of the game Quoridor.
-This game is a 2 or 4 players game where you need to reach the other side of the board with your pawn.
-To do this, you can either move your pawn one square, or place a barrier to slow the progression of your opponent.
+This game is a 2 or 4 players game where you need to reach the other side of the board with your pawn. <br />
+To do this, you can either move your pawn one square, or place a barrier to slow the progression of your opponent. <br />
 This project is developed in Java.
 
-## Run the project
+## Installation
+### Recommended environment setup
+* [JDK](https://www.oracle.com/fr/java/technologies/downloads/) 20 or newer
+* [JavaFX](https://gluonhq.com/products/javafx/) 20 or newer
 
-To run this project, all you need to do is:
-- Download (or clone) this repository
-- Open the project folder on your favourite Java IDE (Intellij, Eclipse, ...)
-- Go to the following file: "src/main/java/graphicInterface/Home.java"
-- Run the file with the green arrow (in the top right corner on Intellij, in the top left corner on Eclipse)
-- Enjoy the game!
+### Run without generating a JAR file
+If you don't need to generate a JAR file and just want to execute the application, you can do the following:
+1. Clone the repository or download it
+```bash
+git clone https://github.com/guillermfr/CYPath
+cd CYPath
+```
 
-## Play the game
+2. Run the application using the Maven Wrapper
 
-### Home
+   2.1. Under Windows
+    ```bash
+    ./mvnw.cmd javafx:run
+    ```
 
-When you run the game, the first scene that you see is the _Home scene_.
-From this scene, you can either start a new game, continue a saved game, or quit the game.
+   2.2. Under Linux (or any other Unix-based OS)
+    ```bash
+    ./mvnw javafx:run
+    ```
 
-### New game
+### Setup to run through a JAR file
+If you do need to generate a JAR file to export it afterward, you can do the following:
+1. Clone the repository or download it
+```bash
+git clone https://github.com/guillermfr/CYPath
+cd CYPath
+```
 
-By clicking the _New game button_,
-you will land on a scene on which you will be able to choose if you want to play a game with 2 or 4 players.
-Clicking on of those two buttons will start a game with the number of players chosen.
+2. Generate the JAR archive from the source code using the Maven Wrapper
 
-### Game
+    2.1. Under Windows
+    ```bash
+    ./mvnw.cmd package
+    ```
 
-#### Game display
+   2.2. Under Linux (or any other Unix-based OS)
+    ```bash
+    ./mvnw package
+    ```
 
-By clicking on of the two buttons from the _New game_ scene, you will land on the Game scene.
+3. Move to the generated folder
+```bash
+cd target
+```
 
-In the centre is the board. You can see the different players that are represented with colorful circles.
+4. Now, you can launch the application using the JAR file
+```bash
+java --module-path "path/to/javafx-sdk-x.y.z/lib" --add-modules javafx.controls,javafx.fxml -jar ./CYPath-x.y.jar
+```
+Where `path/to/javafx-sdk-x.y.z/lib` is the path to your javafx lib directory (e.g. `C:/javafx-sdk-20.0.1/lib`) and `./CYPath-x.y.jar` is the name of the generated file with the correct version (e.g. `./CYPath-1.0.jar`).
 
-At the top of the screen, there is a label showing whose turn it is.
+## How to play
 
-On the right, there is multiple information.
-- First, there is the turns' counter.
-- Then, there is the number of barriers placed on the board. This number is limited to 20. When every barrier has been placed, the button becomes gray, and it is no longer possible to click on it.
-- Just below is the _action button_. By default, the player can move his pawn. By clicking this button, the player can place a barrier. He can click this button one more time if he changed his mind.
-- Finally, there are _two buttons_. The first one is to save the game, and the second one is to load a game.
+Upon launching the application, you will choose between starting a new game, load one from a save file, or quit the application. If you choose to start a new game, you will be prompted to choose between 2 or 4 players.
 
-#### Move your pawn
+![Home](https://i.imgur.com/dOTouXj.png)
 
-To move your pawn, all you need to do is click on the case you want to go to during your turn.
-However, you will only be able to do that if the move is valid.
-To know if a move is valid, the game indicates with lighter circles where you can go.
-You can then click on one of the cases.
-If you try to click on a case you are not able to go to, nothing will happen.
+### Rules
+Each player starts in the middle of an edge of the board. To win, a player has to reach any cell on the opposite edge first. <br />
+On their turn, a player can either move or place a barrier.
 
-#### Place a barrier
+* If they choose to move, they can only move by one cell, unless there is a player next to them. In this case, they can jump over them. However, if there is a barrier or another player behind their opponent, they can choose to move diagonally (next to the opponent next to them).
 
-First, you need to click the _action button_ on the right.
-Then, when you move your mouse on the screen, you will see a bar on the board that follows your mouse.
-It represents the barrier that you can set.
-If you want to change the direction of the barrier, you can right-click to change it.
+<div style="display: flex; flex-direction: row; justify-content: space-between">
+   <img src="https://i.imgur.com/tRI59M9.gif" width="400" height="400" alt="Jumping Move">
+   <img src="https://i.imgur.com/8HrrspE.gif" width="400" height="400" alt="Diagonal Move">
+</div>
 
-Then, you can left-click to place the barrier.
-If the barrier is invalid, it will flash red.
-This can happen in the cases:
-- If the barrier overlaps another barrier
-- If the barrier blocks another player's path to the other side of the board
+* If they choose to place a barrier, they can place it horizontally or vertically. <br />
+They can't place it if it overlaps another barrier or completely blocks a player from winning.
 
-#### Save and Load
+![Barrier](https://i.imgur.com/tLEgtSn.gif)
 
-When you click on the _Save button_ for the first time,
-a dialog box will appear where you will be able to enter the name of the save file.
-Then everytime you will click on the _Save button_ in a game that has already been saved previously,
-it will automatically save it in the same file.
+### Controls
 
-When you click on the _Load button_, it will redirect you to the Continue scene.
-
-#### End of the game
-
-The game ends when one of the players reaches the other side of the board.
-It is no longer possible to move your pawn neither place a barrier.
-The save button also disappears, and the two buttons left are the _Load button_ and the _Back button_.
-
-### Continue
-
-By clicking the _Continue button_,
-you will land on a scene on which you will see a list of every game that has been saved.
-From this scene, you are able to either resume a saved game, or delete it.
-
-### Back
-
-At any point, if you want to go back to the _Home scene_, you can click on the top left arrow.
-
-### Quit
-
-By clicking the _Quit button_, the window will simply close and the program will stop.
+* To move a player, click on one of the *ghosts* on the board to move there.
+* To place a barrier, click `Place a barrier` and then click between two cells to place it. <br />
+  By default, it will be placed horizontally, and it can be switched vertically by right-clicking. <br />
+  If you changed your mind and want to move your player, you can click on `Move player`
 
 ## Authors
 
