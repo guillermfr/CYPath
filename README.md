@@ -1,4 +1,4 @@
-<div style="text-align: center">
+<div align="center">
 		<img style="margin-top: 10%" src="src/main/resources/img/logo.png" width="546" alt="Logo CYPath" />
 </div>
 
@@ -76,7 +76,7 @@ On their turn, a player can either move or place a barrier.
 
 * If they choose to move, they can only move by one cell, unless there is a player next to them. In this case, they can jump over them. However, if there is a barrier or another player behind their opponent, they can choose to move diagonally (next to the opponent next to them).
 
-<div style="display: flex; flex-direction: row; justify-content: space-between">
+<div align="center">
    <img src="https://i.imgur.com/tRI59M9.gif" width="400" height="400" alt="Jumping Move">
    <img src="https://i.imgur.com/8HrrspE.gif" width="400" height="400" alt="Diagonal Move">
 </div>
