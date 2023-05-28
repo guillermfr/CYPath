@@ -79,9 +79,8 @@ public class SceneController {
 
     /**
      * This method closes the application.
-     * @param event The event that happened. In this case, it is a button click.
      */
-    public void exit(ActionEvent event) {
+    public void exit() {
         Platform.exit();
     }
 
