@@ -9,6 +9,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import static constant.GraphicInterfaceSizes.SCREEN_HEIGHT;
+import static constant.GraphicInterfaceSizes.SCREEN_WIDTH;
+
 /**
  * This class manages the back button.
  */
@@ -46,7 +49,7 @@ public class BackButtonController {
 
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
 
-        scene = new Scene(root);
+        scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
         stage.setScene(scene);
         stage.show();
     }
