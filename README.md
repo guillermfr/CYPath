@@ -1,5 +1,5 @@
 <div align="center">
-		<img src="https://i.imgur.com/tA8sO2f.png" alt="Logo CYPath" />
+		<img src="https://i.imgur.com/YnWDRCO.png" alt="Logo CYPath" />
 </div>
 
 ## Table of Contents
