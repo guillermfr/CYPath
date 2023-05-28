@@ -8,6 +8,7 @@
 
 .buttonContinueMenu:hover {
     -fx-background-color : #80c4ff;
+    -fx-cursor: hand;
 }
 
 .buttonContinueMenu:pressed {
