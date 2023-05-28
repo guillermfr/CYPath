@@ -39,7 +39,7 @@ If you don't need to generate a JAR file and just want to execute the applicatio
 
    1.1. Under Windows
     ```bash
-    ./mvnw.cmd javafx:run
+    .\mvnw.cmd javafx:run
     ```
 
    1.2. Under Linux (or any other Unix-based OS)
@@ -54,7 +54,7 @@ If you do need to generate a JAR file to export it afterward, you can do the fol
 
     1.1. Under Windows
     ```bash
-    ./mvnw.cmd package
+    .\mvnw.cmd package
     ```
 
    1.2. Under Linux (or any other Unix-based OS)
@@ -71,14 +71,15 @@ cd target
 ```bash
 java --module-path "path/to/javafx-sdk-x.y.z/lib" --add-modules javafx.controls,javafx.fxml -jar ./CYPath-x.y.jar
 ```
-Where `path/to/javafx-sdk-x.y.z/lib` is the path to your javafx lib directory (e.g. `C:/javafx-sdk-20.0.1/lib`) and `./CYPath-x.y.jar` is the name of the generated file with the correct version (e.g. `./CYPath-1.0.jar`).
+Where `path/to/javafx-sdk-x.y.z/lib` is the path to your javafx lib directory (e.g. `C:/javafx-sdk-20.0.1/lib`) and `./CYPath-x.y.jar` is the name of the generated file with the correct version (e.g. `./CYPath-1.0.jar`). <br />
+Note that if you're using Windows, you might need to replace all `/` with `\ `.
 
 ### Generate JavaDoc
 1. Generate it using the Maven Wrapper
 
    1.1. Under Windows
     ```bash
-    ./mvnw.cmd javadoc:javadoc
+    .\mvnw.cmd javadoc:javadoc
     ```
 
    1.2. Under Linux (or any other Unix-based OS)
