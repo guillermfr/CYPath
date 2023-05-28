@@ -100,7 +100,7 @@ public class GameController {
     public void initResume(Game resumedGame, String saveName) throws Exception {
         this.game = resumedGame;
         saveNameGeneral = saveName;
-        barrierCountLabel.setText(resumedGame.getBoard().getBarriers().size() + "/" + BARRIER_LIMIT);
+        barrierCountLabel.setText(resumedGame.getBoard().getBarrierCount() + "/" + BARRIER_LIMIT);
 
         init();
     }
@@ -209,7 +209,7 @@ public class GameController {
                 playerListFx[3] = greenPlayer;
             }
         } catch (UnknownPlayerIdException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -319,7 +319,7 @@ public class GameController {
                     }
                 }
             } catch (Exception e) {
-                System.out.println(e);
+                e.printStackTrace();
             }
         };
 
@@ -378,7 +378,7 @@ public class GameController {
                                 playersAndBarriersPane.getChildren().add(rectangle);
 
                                 // Update the barrier count label
-                                int barrierCount = game.getBoard().getBarriers().size();
+                                int barrierCount = game.getBoard().getBarrierCount();
                                 barrierCountLabel.setText(barrierCount + "/" + BARRIER_LIMIT);
 
                                 // Check if the barrier count has reached the limit
@@ -423,7 +423,7 @@ public class GameController {
                             }
                         }
                     } catch (Exception ex) {
-                        System.out.println(ex);
+                        ex.printStackTrace();
                     }
                 }
             }
@@ -451,7 +451,7 @@ public class GameController {
                 if (game.checkVictory() == null) {
                     if (isModeMovePlayer.get()) {
                         // Switch to barrier placement mode if the barrier limit is not reached
-                        if (game.getBoard().getBarriers().size() < BARRIER_LIMIT) {
+                        if (game.getBoard().getBarrierCount() < BARRIER_LIMIT) {
                             isModeMovePlayer.set(false);
                             playButton.setText("Move player");
 
@@ -507,7 +507,7 @@ public class GameController {
 
         ghostPlayers.clear();
 
-        game.setTurnCount(game.getTurnCount() + 1);
+        game.turnCountIncrement();
         gameTurn(playerListFx, playersAndBarriersPane, panePadding, gridGap, boxSize);
     }
 
@@ -754,7 +754,7 @@ public class GameController {
                         lastBarrierY.set(edges[0].getSource().getY());
                     }
                 } catch (Exception ex) {
-                    System.out.println(ex);
+                    ex.printStackTrace();
                 }
             }
         }
