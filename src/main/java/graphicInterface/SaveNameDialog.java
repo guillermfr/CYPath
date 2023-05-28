@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 public class SaveNameDialog extends Dialog<SaveFileName> {
 
-    private SaveFileName saveName;
+    private final SaveFileName saveName;
 
     private TextField saveNameField;
 
