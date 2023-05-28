@@ -35,16 +35,16 @@
                <Font name="Reem Kufi Regular" size="40.0" />
             </font>
          </Label>
-         <Button fx:id="playButton" mnemonicParsing="false" prefHeight="90.0" prefWidth="340.0" styleClass="normalButton" stylesheets="@../style/buttons.css" text="Place a barrier">
+         <Button fx:id="playButton" mnemonicParsing="false" prefHeight="90.0" prefWidth="375.0" styleClass="normalButton" stylesheets="@../style/buttons.css" text="Place a barrier">
             <VBox.margin>
                <Insets bottom="70.0" top="70.0" />
             </VBox.margin>
          </Button>
-         <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveGame" prefHeight="90.0" prefWidth="340.0" styleClass="normalButton" stylesheets="@../style/buttons.css" text="Save">
+         <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveGame" prefHeight="90.0" prefWidth="375.0" styleClass="normalButton" stylesheets="@../style/buttons.css" text="Save">
             <VBox.margin>
                <Insets bottom="15.0" />
             </VBox.margin></Button>
-         <fx:include prefWidth="340.0" source="LoadButton.fxml" />
+         <fx:include prefWidth="375.0" source="LoadButton.fxml" />
          <padding>
             <Insets top="64.0" />
          </padding>
