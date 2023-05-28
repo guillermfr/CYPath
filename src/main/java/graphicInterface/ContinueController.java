@@ -98,7 +98,7 @@ public class ContinueController extends SceneController implements Initializable
 
                 Button resumeButton = new Button("Resume");
                 resumeButton.getStyleClass().add("buttonContinueMenu");
-                resumeButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                resumeButton.setOnMouseClicked(new EventHandler<>() {
                     /**
                      * Handles the mouse event triggered by selecting a "Continue" option from the list of saved games.
                      * Resumes the game from the selected saved file and navigates to the game board screen.
@@ -115,7 +115,7 @@ public class ContinueController extends SceneController implements Initializable
                                 // Initialize the game controller with the resumed game and the file name
                                 gameController.initResume(resumedGame, file.getName());
                             } catch (Exception e) {
-                                System.out.println(e);
+                                e.printStackTrace();
                             }
 
                             stage = (Stage) listContinue.getScene().getWindow();
@@ -129,7 +129,7 @@ public class ContinueController extends SceneController implements Initializable
 
                 Button deleteSaveButton = new Button("Delete");
                 deleteSaveButton.getStyleClass().add("buttonContinueMenu");
-                deleteSaveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                deleteSaveButton.setOnMouseClicked(new EventHandler<>() {
                     /**
                      * Handles the mouse event triggered by selecting a delete option for a saved game.
                      * @param mouseEvent The mouse event triggered by the delete option.
@@ -162,6 +162,7 @@ public class ContinueController extends SceneController implements Initializable
 
             // We add an image
             URL imageURL = getClass().getResource("/img/error_404.png");
+            assert imageURL != null;
             Image image = new Image (imageURL.toString());
             ImageView imageView = new ImageView(image);
             imageView.setStyle("-fx-border-color: black; -fx-border-width: 10");
