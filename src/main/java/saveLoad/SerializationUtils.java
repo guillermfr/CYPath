@@ -27,7 +27,6 @@ public abstract class SerializationUtils {
 
             // Serialize the Game object and write it to the file output stream
             out.writeObject(game);
-            System.out.println("game serialized : "+ filename);
 
         } catch (IOException e){
             // Handle any input/output exceptions that occur during serialization
@@ -42,13 +41,12 @@ public abstract class SerializationUtils {
      * @return The deserialized Game object, or null if and error occurs during deserialization.
      */
     public static Game deserialisationGame(String filename){
-        Game game = null;
+        Game game;
         try (FileInputStream fileIn = new FileInputStream(GameProperties.SAVE_PATH + filename);
         ObjectInputStream in = new ObjectInputStream(fileIn)){
 
             // Deserialize the input data and convert it to a Game object
             game = (Game) in.readObject();
-            System.out.println("game deserialized : "+ filename);
             return game;
 
         } catch (IOException | ClassNotFoundException e){
