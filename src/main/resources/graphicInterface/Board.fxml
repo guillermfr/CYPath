@@ -44,7 +44,7 @@
             <VBox.margin>
                <Insets bottom="15.0" />
             </VBox.margin></Button>
-         <fx:include prefWidth="375.0" source="LoadButton.fxml" />
+         <fx:include prefHeight="90.0" prefWidth="375.0" source="LoadButton.fxml" />
          <padding>
             <Insets top="64.0" />
          </padding>
