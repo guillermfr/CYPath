@@ -16,7 +16,7 @@
          </children></StackPane>
    </center>
    <right>
-      <VBox fx:id="rightVBox" maxWidth="400.0" minHeight="0.0" minWidth="0.0" prefHeight="947.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+      <VBox fx:id="rightVBox" maxWidth="480.0" minHeight="0.0" minWidth="0.0" prefHeight="888.0" prefWidth="480.0" BorderPane.alignment="CENTER">
          <Label fx:id="turnCountLabel" prefHeight="48.0" prefWidth="176.0" text="Turn 1" textFill="WHITE">
             <font>
                <Font name="Reem Kufi Regular" size="40.0" />
@@ -72,6 +72,6 @@
       </HBox>
    </bottom>
    <left>
-      <VBox maxWidth="350.0" prefHeight="962.0" prefWidth="400.0" BorderPane.alignment="CENTER" />
+      <VBox maxWidth="430.0" prefHeight="888.0" prefWidth="430.0" BorderPane.alignment="CENTER" />
    </left>
 </BorderPane>
