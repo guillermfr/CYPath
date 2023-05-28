@@ -98,7 +98,7 @@ public class Position implements Serializable {
             this.setY(y);
         }
         catch (BadPositionException bpe) {
-            System.out.println(bpe);
+            bpe.printStackTrace();
         }
     }
 
@@ -125,7 +125,7 @@ public class Position implements Serializable {
         // We create the map that will be returned
         // This map has directions as keys and edges as values
         // So for each direction, there is an edge associated, if it exists
-        Map<Direction, Edge> neighbours = new HashMap<Direction, Edge>();
+        Map<Direction, Edge> neighbours = new HashMap<>();
         int index = this.toAdjacencyListIndex(graph.getSize());
 
         // For every edge connected to the Position, we verify in which direction it is, and add it to the Map.
@@ -156,7 +156,7 @@ public class Position implements Serializable {
 
         // Similar to getNeighbourEdges, we create a map with directions as keys and in this case, positions as neighbours
         Map<Direction, Edge> edgeNeighbours = this.getNeighbourEdges(graph);
-        Map<Direction, Position> positionNeighbours = new HashMap<Direction, Position>();
+        Map<Direction, Position> positionNeighbours = new HashMap<>();
 
         // We can re-use the method getNeighbourEdges
         // We just have to get the neighbour edges and take every target Position of these edges
