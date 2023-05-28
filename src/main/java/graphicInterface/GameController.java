@@ -397,29 +397,32 @@ public class GameController {
                                 // Go to the next turn
                                 goToNextTurn(playerListFx, ghostPlayers, playersAndBarriersPane, isModeMovePlayer, isBarrierHorizontal, panePadding, gridGap, boxSize);
                             } else {
-                                // Create an animation for the failed barrier placement
-                                Animation animation = new Transition() {
-                                    {
-                                        setCycleDuration(Duration.millis(500));
-                                        setInterpolator(Interpolator.EASE_OUT);
-                                        lastTransition[0] = this;
-                                    }
+                                // We check the ghost barrier is still present (can happen to not be the case if the user jitter clicks)
+                                if (previousGhostBarrier[0] != null) {
+                                    // Create an animation for the failed barrier placement
+                                    Animation animation = new Transition() {
+                                        {
+                                            setCycleDuration(Duration.millis(500));
+                                            setInterpolator(Interpolator.EASE_OUT);
+                                            lastTransition[0] = this;
+                                        }
 
-                                    /**
-                                     * Interpolates the color of the previous ghost barrier to indicate the failure.
-                                     * @param v The current value of the interpolation (between 0.0 and 1.0).
-                                     */
-                                    @Override
-                                    protected void interpolate(double v) {
-                                        // Interpolate the color of the previous ghost barrier to indicate the failure
-                                        if (previousGhostBarrier[0] != null)
-                                            previousGhostBarrier[0].setFill(new Color(1 - v, 0, 0, 0.5));
-                                    }
-                                };
+                                        /**
+                                         * Interpolates the color of the previous ghost barrier to indicate the failure.
+                                         * @param v The current value of the interpolation (between 0.0 and 1.0).
+                                         */
+                                        @Override
+                                        protected void interpolate(double v) {
+                                            // Interpolate the color of the previous ghost barrier to indicate the failure
+                                            if (previousGhostBarrier[0] != null)
+                                                previousGhostBarrier[0].setFill(new Color(1 - v, 0, 0, 0.5));
+                                        }
+                                    };
 
-                                // Set the fill color of the previous ghost barrier to indicate the failure
-                                previousGhostBarrier[0].setFill(new Color(1, 0, 0, 0.5));
-                                animation.play();
+                                    // Set the fill color of the previous ghost barrier to indicate the failure
+                                    previousGhostBarrier[0].setFill(new Color(1, 0, 0, 0.5));
+                                    animation.play();
+                                }
                             }
                         }
                     } catch (Exception ex) {
