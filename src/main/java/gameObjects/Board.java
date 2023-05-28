@@ -16,7 +16,7 @@ public class Board extends EdgeWeightedGraph implements Serializable {
     /**
      * List of barriers placed on the board.
      */
-    private List<Barrier> barriers;
+    private final List<Barrier> barriers;
 
     /**
      * Constructor of the board class.
