@@ -107,21 +107,23 @@ public class ContinueController extends SceneController implements Initializable
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         Game resumedGame = SerializationUtils.deserialisationGame(file.getName());
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("Board.fxml"));
-                        try {
-                            root = loader.load();
-                            GameController gameController = loader.getController();
-                            // Initialize the game controller with the resumed game and the file name
-                            gameController.initResume(resumedGame, file.getName());
-                        } catch (Exception e) {
-                            System.out.println(e);
+                        if(resumedGame != null) {
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("Board.fxml"));
+                            try {
+                                root = loader.load();
+                                GameController gameController = loader.getController();
+                                // Initialize the game controller with the resumed game and the file name
+                                gameController.initResume(resumedGame, file.getName());
+                            } catch (Exception e) {
+                                System.out.println(e);
+                            }
+
+                            stage = (Stage) listContinue.getScene().getWindow();
+
+                            scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
+                            stage.setScene(scene);
+                            stage.show();
                         }
-
-                        stage = (Stage) listContinue.getScene().getWindow();
-
-                        scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
-                        stage.setScene(scene);
-                        stage.show();
                     }
                 });
 
