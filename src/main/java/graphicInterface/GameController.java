@@ -100,6 +100,7 @@ public class GameController {
     public void initResume(Game resumedGame, String saveName) throws Exception {
         this.game = resumedGame;
         saveNameGeneral = saveName;
+        barrierCountLabel.setText(resumedGame.getBoard().getBarriers().size() + "/" + BARRIER_LIMIT);
 
         init();
     }
